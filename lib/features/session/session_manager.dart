@@ -4,13 +4,20 @@ import '../../data/repositories/answer_repository.dart';
 import '../../domain/enums/answer_category.dart';
 import '../../domain/enums/difficulty.dart';
 import 'answer_draw_result.dart';
+import 'session_statistics.dart';
 
 class SessionManager {
-  SessionManager(this._repository, {Random? random})
-    : _random = random ?? Random();
+  SessionManager(
+    this._repository, {
+    Random? random,
+    SessionStatistics? statistics,
+  }) : _random = random ?? Random(),
+       statistics = statistics ?? SessionStatistics();
 
   final AnswerRepository _repository;
   final Random _random;
+
+  final SessionStatistics statistics;
 
   final Map<AnswerCategory, Map<Difficulty, Set<String>>> _usedAnswers = {};
 
@@ -54,6 +61,7 @@ class SessionManager {
 
   void reset() {
     _usedAnswers.clear();
+    statistics.reset();
   }
 
   Set<String> _usedAnswersFor(AnswerCategory category, Difficulty difficulty) {
