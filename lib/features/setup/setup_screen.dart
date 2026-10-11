@@ -15,11 +15,15 @@ class SetupScreen extends StatefulWidget {
     super.key,
     required this.repository,
     required this.onStart,
+    this.onOpenStatistics,
+    this.onOpenAbout,
     this.logoAssetPath,
   });
 
   final AnswerRepository repository;
   final void Function(AnswerCategory category, Difficulty difficulty) onStart;
+  final VoidCallback? onOpenStatistics;
+  final VoidCallback? onOpenAbout;
   final String? logoAssetPath;
 
   @override
@@ -142,7 +146,7 @@ class _SetupScreenState extends State<SetupScreen> {
                     padding: const EdgeInsets.all(AppSpacing.lg),
                     decoration: BoxDecoration(
                       color: AppColors.surfaceContainerLow,
-                      borderRadius: BorderRadius.circular(AppRadius.lg)
+                      borderRadius: BorderRadius.circular(AppRadius.lg),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -153,33 +157,59 @@ class _SetupScreenState extends State<SetupScreen> {
                           style: Theme.of(context).textTheme.titleMedium,
                         ),
 
-                        const SizedBox(height: 12,),
+                        const SizedBox(height: 12),
                         Text.rich(
-                          TextSpan(children: [
-                            const TextSpan(
-                              text: 'Categoria - ',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            TextSpan(text: _category!.label),
-                          ])
+                          TextSpan(
+                            children: [
+                              const TextSpan(
+                                text: 'Categoria - ',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              TextSpan(text: _category!.label),
+                            ],
+                          ),
                         ),
-                        
-                        const SizedBox(height: 8,),
+
+                        const SizedBox(height: 8),
                         Text.rich(
-                          TextSpan(children: [
-                            const TextSpan(
-                              text: 'Dificuldade - ',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            TextSpan(text: _difficulty!.label)
-                          ])
-                        )
+                          TextSpan(
+                            children: [
+                              const TextSpan(
+                                text: 'Dificuldade - ',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              TextSpan(text: _difficulty!.label),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                   ),
                   const SizedBox(height: 16),
                 ],
                 SetupStartButton(onPressed: enabled ? _confirm : null),
+                if (widget.onOpenStatistics != null ||
+                    widget.onOpenAbout != null) ...[
+                  const SizedBox(height: AppSpacing.sm),
+                  Wrap(
+                    alignment: WrapAlignment.center,
+                    spacing: AppSpacing.sm,
+                    children: [
+                      if (widget.onOpenStatistics != null)
+                        TextButton.icon(
+                          onPressed: widget.onOpenStatistics,
+                          icon: const Icon(Icons.bar_chart_outlined),
+                          label: const Text('Estatísticas da sessão'),
+                        ),
+                      if (widget.onOpenAbout != null)
+                        TextButton.icon(
+                          onPressed: widget.onOpenAbout,
+                          icon: const Icon(Icons.info_outline),
+                          label: const Text('Sobre a equipe'),
+                        ),
+                    ],
+                  ),
+                ],
                 const SizedBox(height: 8),
                 Text(
                   'Boa sorte em sua jornada mágica!',
