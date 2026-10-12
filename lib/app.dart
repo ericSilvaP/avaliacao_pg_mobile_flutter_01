@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'data/models/answer_entry.dart';
 import 'data/repositories/answer_repository.dart';
 import 'domain/enums/answer_category.dart';
 import 'domain/enums/difficulty.dart';
@@ -8,14 +7,12 @@ import 'features/about/about_screen.dart';
 import 'features/result/result_screen.dart';
 import 'features/session/answer_draw_result.dart';
 import 'features/session/pending_round_screen.dart';
-import 'features/session/round_outcome.dart';
 import 'features/session/session_manager.dart';
 import 'features/setup/setup_screen.dart';
 import 'features/statistics/statistics_screen.dart';
 import 'shared/presentation/enum_labels.dart';
 import 'shared/theme/app_theme.dart';
 import 'src/domain/round_result.dart';
-import 'src/domain/round_status.dart';
 
 class HangmanApp extends StatefulWidget {
   const HangmanApp({super.key, required this.repository});
@@ -49,10 +46,9 @@ class _HangmanAppState extends State<HangmanApp> {
               entry: entry,
               category: category,
               difficulty: difficulty,
-              onRoundFinished: (outcome) => _finishRound(
+              onRoundFinished: (result) => _finishRound(
                 context,
-                entry: entry,
-                outcome: outcome,
+                result: result,
                 category: category,
                 difficulty: difficulty,
               ),
@@ -77,21 +73,10 @@ class _HangmanAppState extends State<HangmanApp> {
 
   void _finishRound(
     BuildContext context, {
-    required AnswerEntry entry,
-    required RoundOutcome outcome,
+    required RoundResult result,
     required AnswerCategory category,
     required Difficulty difficulty,
   }) {
-    final result = RoundResult(
-      answerEntry: entry,
-      status: switch (outcome.type) {
-        RoundOutcomeType.victory => RoundStatus.won,
-        RoundOutcomeType.defeat => RoundStatus.lost,
-      },
-      errorCount: outcome.errorCount,
-      hintUsed: outcome.hintUsed,
-    );
-
     _session.statistics.register(result);
 
     Navigator.of(context).push(

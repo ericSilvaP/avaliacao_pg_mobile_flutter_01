@@ -6,7 +6,9 @@ import '../../domain/enums/difficulty.dart';
 import '../../shared/presentation/enum_labels.dart';
 import '../../shared/theme/app_colors.dart';
 import '../../shared/theme/app_theme.dart';
-import 'round_outcome.dart';
+import '../../src/domain/game_round.dart';
+import '../../src/domain/round_result.dart';
+import '../../src/domain/text_format.dart';
 
 const Color _roundBackground = Color(0xFF0E0920);
 
@@ -22,7 +24,32 @@ class PendingRoundScreen extends StatelessWidget {
   final AnswerEntry entry;
   final AnswerCategory category;
   final Difficulty difficulty;
-  final void Function(RoundOutcome outcome) onRoundFinished;
+  final void Function(RoundResult result) onRoundFinished;
+
+  RoundResult _simulateVictory() {
+    final round = GameRound(answer: entry);
+
+    for (final character in TextFormat.format(entry.answer).split('')) {
+      round.guessLetter(character);
+    }
+
+    return round.toResult();
+  }
+
+  RoundResult _simulateDefeat() {
+    final round = GameRound(answer: entry);
+    final answerLetters = TextFormat.format(entry.answer).split('').toSet();
+
+    for (final letter in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')) {
+      if (round.isFinished) break;
+
+      if (!answerLetters.contains(letter)) {
+        round.guessLetter(letter);
+      }
+    }
+
+    return round.toResult();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -125,27 +152,13 @@ class PendingRoundScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: AppSpacing.md),
                 FilledButton.icon(
-                  onPressed: () => onRoundFinished(
-                    RoundOutcome(
-                      type: RoundOutcomeType.victory,
-                      answer: entry.answer,
-                      errorCount: 0,
-                      hintUsed: false,
-                    ),
-                  ),
+                  onPressed: () => onRoundFinished(_simulateVictory()),
                   icon: const Icon(Icons.emoji_events_outlined),
                   label: const Text('Simular vitória'),
                 ),
                 const SizedBox(height: AppSpacing.md),
                 OutlinedButton.icon(
-                  onPressed: () => onRoundFinished(
-                    RoundOutcome(
-                      type: RoundOutcomeType.defeat,
-                      answer: entry.answer,
-                      errorCount: 6,
-                      hintUsed: false,
-                    ),
-                  ),
+                  onPressed: () => onRoundFinished(_simulateDefeat()),
                   icon: const Icon(Icons.sentiment_dissatisfied_outlined),
                   label: const Text('Simular derrota'),
                 ),
