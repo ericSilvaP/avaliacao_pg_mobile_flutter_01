@@ -1,11 +1,9 @@
 ## Integrantes
 
-- Integrante 1: **Kauã Neres Moura**
-- Integrante 2: **[PREENCHER: nome completo]**
-- Integrante 3: **[PREENCHER: nome completo]**
-- Integrante 4: **[PREENCHER: nome completo]**
-
-Os quatro nomes completos não foram encontrados no repositório. Esta documentação permanece pendente de preenchimento da identificação da equipe exigida pela Seção 10.
+- Integrante 1: **Kauã Neres Moura** (https://github.com/Kaua-cel)
+- Integrante 2: **José Maranhão da Silva Neto** (https://github.com/maranhaojose)
+- Integrante 3: **Alan Rodrigues de Castro** (https://github.com/alanrcastro100)
+- Integrante 4: **Eric Silva Patricio** (https://github.com/ericSilvaP)
 
 ## Nome do projeto
 
@@ -265,6 +263,5 @@ Conforme as restrições informadas para a avaliação, essas dependências exte
 
 ## Pendências de documentação
 
-- Preencher os nomes completos dos quatro integrantes no início deste arquivo. Sem isso, a exigência de identificação da Seção 10 permanece pendente.
 - Conferir esta documentação com o enunciado original: nenhum documento da avaliação foi encontrado no repositório. Os requisitos e o contexto acadêmico aqui descritos foram fornecidos na tarefa de documentação.
 - Confirmar com o material da disciplina a procedência e a versão oficial de `assets/data/hangman.json`.
