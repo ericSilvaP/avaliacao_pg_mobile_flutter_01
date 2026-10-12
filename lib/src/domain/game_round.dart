@@ -1,12 +1,13 @@
-import '/src/data/models/answer_entry.dart';
-import '/src/domain/text_format.dart';
+import 'package:avaliacao_pg_mobile_flutter_01/data/models/answer_entry.dart';
+import 'package:avaliacao_pg_mobile_flutter_01/src/domain/text_format.dart';
+
 import 'round_result.dart';
 import 'round_status.dart';
 
 class GameRound {
   GameRound({required this.answer, this.maxErrors = 6})
-      : assert(maxErrors > 0, 'maxErrors deve ser positivo'),
-        _normalizedAnswer = TextFormat.format(answer.answer);
+    : assert(maxErrors > 0, 'maxErrors deve ser positivo'),
+      _normalizedAnswer = TextFormat.format(answer.answer);
 
   static const String hiddenSymbol = '_';
 
@@ -20,8 +21,8 @@ class GameRound {
   Set<String> get guessedLetters => Set.unmodifiable(_guessedLetters);
 
   Set<String> get wrongLetters => Set.unmodifiable(
-        _guessedLetters.where((l) => !_normalizedAnswer.contains(l)),
-      );
+    _guessedLetters.where((l) => !_normalizedAnswer.contains(l)),
+  );
 
   bool get hintUsed => _hintUsed;
 

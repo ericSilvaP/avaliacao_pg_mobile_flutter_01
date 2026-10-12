@@ -1,5 +1,1 @@
-enum RoundStatus {
-  inProgress,
-  won,
-  lost,
-}
+enum RoundStatus { inProgress, won, lost }
