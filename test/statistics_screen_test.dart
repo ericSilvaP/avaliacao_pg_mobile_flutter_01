@@ -1,20 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:avaliacao_pg_mobile_flutter_01/features/session/round_outcome.dart';
+import 'package:avaliacao_pg_mobile_flutter_01/data/models/answer_entry.dart';
+import 'package:avaliacao_pg_mobile_flutter_01/domain/enums/answer_category.dart';
+import 'package:avaliacao_pg_mobile_flutter_01/domain/enums/difficulty.dart';
 import 'package:avaliacao_pg_mobile_flutter_01/features/session/session_statistics.dart';
 import 'package:avaliacao_pg_mobile_flutter_01/features/statistics/statistics_screen.dart';
 import 'package:avaliacao_pg_mobile_flutter_01/shared/theme/app_theme.dart';
+import 'package:avaliacao_pg_mobile_flutter_01/src/domain/round_result.dart';
+import 'package:avaliacao_pg_mobile_flutter_01/src/domain/round_status.dart';
 
-RoundOutcome buildOutcome({
-  RoundOutcomeType type = RoundOutcomeType.victory,
-  String answer = 'COELHO',
+RoundResult buildResult({
+  bool victory = true,
   int errorCount = 0,
   bool hintUsed = false,
 }) {
-  return RoundOutcome(
-    type: type,
-    answer: answer,
+  return RoundResult(
+    answerEntry: AnswerEntry(
+      answer: 'COELHO',
+      category: AnswerCategory.animals,
+      difficulty: Difficulty.easy,
+      hints: const ['Mamífero de orelhas longas.'],
+    ),
+    status: victory ? RoundStatus.won : RoundStatus.lost,
     errorCount: errorCount,
     hintUsed: hintUsed,
   );
@@ -54,15 +62,9 @@ void main() {
 
   testWidgets('shows accumulated indicators and percentages', (tester) async {
     final statistics = SessionStatistics()
-      ..register(
-        buildOutcome(
-          type: RoundOutcomeType.victory,
-          errorCount: 2,
-          hintUsed: true,
-        ),
-      )
-      ..register(buildOutcome(type: RoundOutcomeType.victory, errorCount: 1))
-      ..register(buildOutcome(type: RoundOutcomeType.defeat, errorCount: 6));
+      ..register(buildResult(victory: true, errorCount: 2, hintUsed: true))
+      ..register(buildResult(errorCount: 1))
+      ..register(buildResult(victory: false, errorCount: 6));
 
     await pumpStatistics(tester, statistics);
 
@@ -86,14 +88,8 @@ void main() {
     addTearDown(tester.view.resetDevicePixelRatio);
 
     final statistics = SessionStatistics()
-      ..register(
-        buildOutcome(
-          type: RoundOutcomeType.defeat,
-          errorCount: 6,
-          hintUsed: true,
-        ),
-      )
-      ..register(buildOutcome(type: RoundOutcomeType.victory, errorCount: 1));
+      ..register(buildResult(victory: false, errorCount: 6, hintUsed: true))
+      ..register(buildResult(errorCount: 1));
 
     await pumpStatistics(tester, statistics, textScale: 3);
 

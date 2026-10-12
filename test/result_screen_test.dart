@@ -1,19 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:avaliacao_pg_mobile_flutter_01/data/models/answer_entry.dart';
+import 'package:avaliacao_pg_mobile_flutter_01/domain/enums/answer_category.dart';
+import 'package:avaliacao_pg_mobile_flutter_01/domain/enums/difficulty.dart';
 import 'package:avaliacao_pg_mobile_flutter_01/features/result/result_screen.dart';
-import 'package:avaliacao_pg_mobile_flutter_01/features/session/round_outcome.dart';
 import 'package:avaliacao_pg_mobile_flutter_01/shared/theme/app_theme.dart';
+import 'package:avaliacao_pg_mobile_flutter_01/src/domain/round_result.dart';
+import 'package:avaliacao_pg_mobile_flutter_01/src/domain/round_status.dart';
 
-RoundOutcome buildOutcome({
-  RoundOutcomeType type = RoundOutcomeType.victory,
+RoundResult buildResult({
+  bool victory = true,
   String answer = 'QUATI SUL-AMERICANO',
   int errorCount = 2,
   bool hintUsed = false,
 }) {
-  return RoundOutcome(
-    type: type,
-    answer: answer,
+  return RoundResult(
+    answerEntry: AnswerEntry(
+      answer: answer,
+      category: AnswerCategory.animals,
+      difficulty: Difficulty.easy,
+      hints: const ['Mamífero de orelhas curtas.'],
+    ),
+    status: victory ? RoundStatus.won : RoundStatus.lost,
     errorCount: errorCount,
     hintUsed: hintUsed,
   );
@@ -21,7 +30,7 @@ RoundOutcome buildOutcome({
 
 Future<void> pumpResult(
   WidgetTester tester, {
-  required RoundOutcome outcome,
+  required RoundResult result,
   VoidCallback? onPlayAgain,
   VoidCallback? onChangeSetup,
   VoidCallback? onOpenStatistics,
@@ -36,7 +45,7 @@ Future<void> pumpResult(
         child: child!,
       ),
       home: ResultScreen(
-        outcome: outcome,
+        result: result,
         onPlayAgain: onPlayAgain ?? () {},
         onChangeSetup: onChangeSetup ?? () {},
         onOpenStatistics: onOpenStatistics,
@@ -63,8 +72,8 @@ void main() {
   ) async {
     await pumpResult(
       tester,
-      outcome: buildOutcome(
-        type: RoundOutcomeType.victory,
+      result: buildResult(
+        victory: true,
         answer: 'ARTICULAÇÃO TÊMPORO-MANDIBULAR',
         errorCount: 3,
         hintUsed: true,
@@ -85,8 +94,8 @@ void main() {
   testWidgets('shows defeat revealing the full answer', (tester) async {
     await pumpResult(
       tester,
-      outcome: buildOutcome(
-        type: RoundOutcomeType.defeat,
+      result: buildResult(
+        victory: false,
         answer: 'CORRIDA COM OBSTÁCULOS',
         errorCount: 6,
       ),
@@ -108,7 +117,7 @@ void main() {
 
     await pumpResult(
       tester,
-      outcome: buildOutcome(),
+      result: buildResult(),
       onPlayAgain: () => playAgain++,
       onChangeSetup: () => changeSetup++,
     );
@@ -128,7 +137,7 @@ void main() {
   testWidgets('shows the statistics action only when it is provided', (
     tester,
   ) async {
-    await pumpResult(tester, outcome: buildOutcome());
+    await pumpResult(tester, result: buildResult());
     await reveal(tester, find.text('Trocar configuração'));
     expect(find.text('Ver estatísticas da sessão'), findsNothing);
   });
@@ -140,7 +149,7 @@ void main() {
 
     await pumpResult(
       tester,
-      outcome: buildOutcome(),
+      result: buildResult(),
       onOpenStatistics: () => openStatistics++,
     );
 
@@ -159,8 +168,8 @@ void main() {
 
     await pumpResult(
       tester,
-      outcome: buildOutcome(
-        type: RoundOutcomeType.defeat,
+      result: buildResult(
+        victory: false,
         answer: 'ARTICULAÇÃO TÊMPORO-MANDIBULAR',
         errorCount: 6,
         hintUsed: true,
