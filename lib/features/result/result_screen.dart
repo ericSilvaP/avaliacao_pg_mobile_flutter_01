@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 
 import '../../shared/theme/app_colors.dart';
 import '../../shared/theme/app_theme.dart';
-import '../session/round_outcome.dart';
+import '../../src/domain/round_result.dart';
 
 const Color _resultBackground = Color(0xFF0F0C1B);
 
 class ResultScreen extends StatelessWidget {
   const ResultScreen({
     super.key,
-    required this.outcome,
+    required this.result,
     required this.onPlayAgain,
     required this.onChangeSetup,
     this.onOpenStatistics,
@@ -17,14 +17,14 @@ class ResultScreen extends StatelessWidget {
     this.defeatLogoAssetPath,
   });
 
-  final RoundOutcome outcome;
+  final RoundResult result;
   final VoidCallback onPlayAgain;
   final VoidCallback onChangeSetup;
   final VoidCallback? onOpenStatistics;
   final String? victoryLogoAssetPath;
   final String? defeatLogoAssetPath;
 
-  bool get _isVictory => outcome.type == RoundOutcomeType.victory;
+  bool get _isVictory => result.isVictory;
 
   @override
   Widget build(BuildContext context) {
@@ -105,7 +105,10 @@ class ResultScreen extends StatelessWidget {
                       children: [
                         Text('Resposta', style: textTheme.bodyMedium),
                         const SizedBox(height: AppSpacing.xs),
-                        Text(outcome.answer, style: textTheme.headlineSmall),
+                        Text(
+                          result.answerEntry.answer,
+                          style: textTheme.headlineSmall,
+                        ),
                       ],
                     ),
                   ),
@@ -121,12 +124,12 @@ class ResultScreen extends StatelessWidget {
                       children: [
                         _ResultRow(
                           label: 'Erros cometidos',
-                          value: '${outcome.errorCount}',
+                          value: '${result.errorCount}',
                         ),
                         const Divider(),
                         _ResultRow(
                           label: 'Dica utilizada',
-                          value: outcome.hintUsed ? 'Sim' : 'Não',
+                          value: result.hintUsed ? 'Sim' : 'Não',
                         ),
                       ],
                     ),

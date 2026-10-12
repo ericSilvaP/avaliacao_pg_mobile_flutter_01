@@ -7,12 +7,12 @@ import 'features/about/about_screen.dart';
 import 'features/result/result_screen.dart';
 import 'features/session/answer_draw_result.dart';
 import 'features/session/pending_round_screen.dart';
-import 'features/session/round_outcome.dart';
 import 'features/session/session_manager.dart';
 import 'features/setup/setup_screen.dart';
 import 'features/statistics/statistics_screen.dart';
 import 'shared/presentation/enum_labels.dart';
 import 'shared/theme/app_theme.dart';
+import 'src/domain/round_result.dart';
 
 class HangmanApp extends StatefulWidget {
   const HangmanApp({super.key, required this.repository});
@@ -46,9 +46,9 @@ class _HangmanAppState extends State<HangmanApp> {
               entry: entry,
               category: category,
               difficulty: difficulty,
-              onRoundFinished: (outcome) => _finishRound(
+              onRoundFinished: (result) => _finishRound(
                 context,
-                outcome: outcome,
+                result: result,
                 category: category,
                 difficulty: difficulty,
               ),
@@ -73,16 +73,16 @@ class _HangmanAppState extends State<HangmanApp> {
 
   void _finishRound(
     BuildContext context, {
-    required RoundOutcome outcome,
+    required RoundResult result,
     required AnswerCategory category,
     required Difficulty difficulty,
   }) {
-    _session.statistics.register(outcome);
+    _session.statistics.register(result);
 
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => ResultScreen(
-          outcome: outcome,
+          result: result,
           victoryLogoAssetPath: 'assets/images/purple-term-logo.png',
           defeatLogoAssetPath: 'assets/images/purple-term-dead-logo.png',
           onPlayAgain: () {

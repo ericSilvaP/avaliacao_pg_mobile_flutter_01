@@ -1,4 +1,4 @@
-import 'round_outcome.dart';
+import '../../src/domain/round_result.dart';
 
 class SessionStatistics {
   int _completedRounds = 0;
@@ -21,19 +21,18 @@ class SessionStatistics {
 
   double get defeatPercentage => _percentageOf(_defeats);
 
-  void register(RoundOutcome outcome) {
+  void register(RoundResult result) {
     _completedRounds++;
 
-    switch (outcome.type) {
-      case RoundOutcomeType.victory:
-        _victories++;
-      case RoundOutcomeType.defeat:
-        _defeats++;
+    if (result.isVictory) {
+      _victories++;
+    } else {
+      _defeats++;
     }
 
-    _totalErrors += outcome.errorCount;
+    _totalErrors += result.errorCount;
 
-    if (outcome.hintUsed) {
+    if (result.hintUsed) {
       _hintsUsed++;
     }
   }
