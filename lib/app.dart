@@ -97,7 +97,7 @@ class _HangmanAppState extends State<HangmanApp> {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => ResultScreen(
-          outcome: outcome,
+          result: result,
           victoryLogoAssetPath: 'assets/images/purple-term-logo.png',
           defeatLogoAssetPath: 'assets/images/purple-term-dead-logo.png',
           onPlayAgain: () {
