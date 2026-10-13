@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../../../data/models/answer_entry.dart';
@@ -14,6 +16,7 @@ import 'widgets/hint_panel.dart';
 import 'widgets/keyboard_layout.dart';
 import 'widgets/letter_keyboard.dart';
 import 'widgets/round_info_header.dart';
+import 'widgets/round_outcome_banner.dart';
 
 class GameScreen extends StatefulWidget {
   const GameScreen({
@@ -25,6 +28,7 @@ class GameScreen extends StatefulWidget {
     this.initialLayout = KeyboardLayout.qwerty,
     this.layoutNotifier,
     this.round,
+    this.finishDelay = const Duration(seconds: 2),
   });
 
   final AnswerEntry entry;
@@ -34,6 +38,7 @@ class GameScreen extends StatefulWidget {
   final KeyboardLayout initialLayout;
   final ValueNotifier<KeyboardLayout>? layoutNotifier;
   final GameRound? round;
+  final Duration finishDelay;
 
   @override
   State<GameScreen> createState() => GameScreenState();
@@ -43,6 +48,7 @@ class GameScreenState extends State<GameScreen> {
   late final GameRound _round;
   late KeyboardLayout _currentLayout;
   String? _hint;
+  Timer? _finishTimer;
 
   GameRound get round => _round;
 
@@ -55,6 +61,18 @@ class GameScreenState extends State<GameScreen> {
     if (_round.hintUsed && widget.entry.hints.isNotEmpty) {
       _hint = widget.entry.hints.first;
     }
+    if (_round.isFinished) {
+      _scheduleFinish();
+    }
+  }
+
+  void _scheduleFinish() {
+    if (_finishTimer != null) return;
+    _finishTimer = Timer(widget.finishDelay, () {
+      if (mounted) {
+        widget.onRoundFinished(_round.toResult());
+      }
+    });
   }
 
   void _onLayoutNotifierChanged() {
@@ -68,6 +86,8 @@ class GameScreenState extends State<GameScreen> {
 
   @override
   void dispose() {
+    _finishTimer?.cancel();
+    _finishTimer = null;
     widget.layoutNotifier?.removeListener(_onLayoutNotifierChanged);
     super.dispose();
   }
@@ -86,6 +106,9 @@ class GameScreenState extends State<GameScreen> {
     setState(() {
       _round.guessLetter(letter);
     });
+    if (_round.isFinished) {
+      _scheduleFinish();
+    }
   }
 
   void _onHintRequested() {
@@ -204,6 +227,10 @@ class GameScreenState extends State<GameScreen> {
                       onHintRequested: _onHintRequested,
                     ),
                     const SizedBox(height: AppSpacing.md),
+                    if (_round.isFinished) ...[
+                      RoundOutcomeBanner(status: _round.status),
+                      const SizedBox(height: AppSpacing.md),
+                    ],
                     LetterKeyboard(
                       guessedLetters: _round.guessedLetters,
                       wrongLetters: _round.wrongLetters,
