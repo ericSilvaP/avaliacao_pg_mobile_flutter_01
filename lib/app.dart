@@ -4,9 +4,9 @@ import 'data/repositories/answer_repository.dart';
 import 'domain/enums/answer_category.dart';
 import 'domain/enums/difficulty.dart';
 import 'features/about/about_screen.dart';
+import 'features/game/presentation/game_screen.dart';
 import 'features/result/result_screen.dart';
 import 'features/session/answer_draw_result.dart';
-import 'features/session/pending_round_screen.dart';
 import 'features/session/session_manager.dart';
 import 'features/setup/setup_screen.dart';
 import 'features/statistics/statistics_screen.dart';
@@ -42,7 +42,7 @@ class _HangmanAppState extends State<HangmanApp> {
       case DrawnAnswer(:final entry):
         await Navigator.of(context).push(
           MaterialPageRoute<void>(
-            builder: (_) => PendingRoundScreen(
+            builder: (_) => GameScreen(
               entry: entry,
               category: category,
               difficulty: difficulty,

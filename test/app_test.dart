@@ -7,8 +7,10 @@ import 'package:avaliacao_pg_mobile_flutter_01/data/repositories/answer_reposito
 import 'package:avaliacao_pg_mobile_flutter_01/domain/enums/answer_category.dart';
 import 'package:avaliacao_pg_mobile_flutter_01/domain/enums/difficulty.dart';
 import 'package:avaliacao_pg_mobile_flutter_01/features/about/about_screen.dart';
-import 'package:avaliacao_pg_mobile_flutter_01/features/session/pending_round_screen.dart';
+import 'package:avaliacao_pg_mobile_flutter_01/features/game/presentation/game_screen.dart';
+import 'package:avaliacao_pg_mobile_flutter_01/features/game/presentation/widgets/letter_key.dart';
 import 'package:avaliacao_pg_mobile_flutter_01/features/setup/setup_screen.dart';
+import 'package:avaliacao_pg_mobile_flutter_01/src/domain/text_format.dart';
 
 class FakeAnswerRepository implements AnswerRepository {
   FakeAnswerRepository(this.entries);
@@ -59,6 +61,11 @@ Future<void> pumpApp(
   WidgetTester tester, {
   AnswerRepository? repository,
 }) async {
+  tester.view.physicalSize = const Size(800, 950);
+  tester.view.devicePixelRatio = 1.0;
+  addTearDown(tester.view.resetPhysicalSize);
+  addTearDown(tester.view.resetDevicePixelRatio);
+
   await tester.pumpWidget(
     HangmanApp(
       repository:
@@ -76,12 +83,11 @@ Future<void> pumpApp(
 }
 
 Future<void> reveal(WidgetTester tester, Finder finder) async {
-  await tester.scrollUntilVisible(
-    finder,
-    200,
-    scrollable: find.byType(Scrollable).first,
-  );
-  await tester.pumpAndSettle();
+  final scrollable = find.byType(Scrollable);
+  if (scrollable.evaluate().isNotEmpty) {
+    await tester.scrollUntilVisible(finder, 200, scrollable: scrollable.last);
+    await tester.pumpAndSettle();
+  }
   await tester.ensureVisible(finder);
   await tester.pumpAndSettle();
 }
@@ -104,6 +110,47 @@ Future<void> startRound(WidgetTester tester) async {
   await tester.pumpAndSettle();
 }
 
+Future<void> tapGameLetter(WidgetTester tester, String letter) async {
+  final finder = find.widgetWithText(LetterKey, letter);
+  await tester.scrollUntilVisible(
+    finder,
+    150,
+    scrollable: find.byType(Scrollable).last,
+  );
+  await tester.pumpAndSettle();
+  await tester.ensureVisible(finder);
+  await tester.tap(finder);
+  await tester.pump();
+}
+
+Future<void> winRound(WidgetTester tester) async {
+  final state = tester.state<GameScreenState>(find.byType(GameScreen));
+  final answer = state.round.answer.answer;
+  final letters = TextFormat.format(answer)
+      .split('')
+      .where(TextFormat.isPlayableLetter)
+      .toSet();
+  for (final l in letters) {
+    await tapGameLetter(tester, l);
+  }
+  await tester.pump(const Duration(seconds: 2));
+  await tester.pumpAndSettle();
+}
+
+Future<void> loseRound(WidgetTester tester) async {
+  final state = tester.state<GameScreenState>(find.byType(GameScreen));
+  final answer = state.round.answer.answer;
+  final answerLetters = TextFormat.format(answer).split('').toSet();
+  for (final l in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')) {
+    if (state.round.isFinished) break;
+    if (!answerLetters.contains(l)) {
+      await tapGameLetter(tester, l);
+    }
+  }
+  await tester.pump(const Duration(seconds: 2));
+  await tester.pumpAndSettle();
+}
+
 void main() {
   testWidgets('opens the about screen from the setup screen', (tester) async {
     await pumpApp(tester);
@@ -123,8 +170,7 @@ void main() {
     await choose<Difficulty>(tester, 'Fácil');
     await startRound(tester);
 
-    expect(find.byType(PendingRoundScreen), findsOneWidget);
-    expect(find.text('Resposta sorteada'), findsOneWidget);
+    expect(find.byType(GameScreen), findsOneWidget);
     expect(find.text('Animais'), findsOneWidget);
     expect(find.text('Fácil'), findsOneWidget);
   });
@@ -136,9 +182,7 @@ void main() {
     await choose<Difficulty>(tester, 'Fácil');
     await startRound(tester);
 
-    await reveal(tester, find.text('Simular vitória'));
-    await tester.tap(find.text('Simular vitória'));
-    await tester.pumpAndSettle();
+    await winRound(tester);
 
     expect(find.text('Vitória!'), findsOneWidget);
 
@@ -157,15 +201,13 @@ void main() {
     await choose<Difficulty>(tester, 'Fácil');
     await startRound(tester);
 
-    await reveal(tester, find.text('Simular vitória'));
-    await tester.tap(find.text('Simular vitória'));
-    await tester.pumpAndSettle();
+    await winRound(tester);
 
     await reveal(tester, find.text('Jogar novamente'));
     await tester.tap(find.text('Jogar novamente'));
     await tester.pumpAndSettle();
 
-    expect(find.byType(PendingRoundScreen), findsOneWidget);
+    expect(find.byType(GameScreen), findsOneWidget);
     expect(find.text('Vitória!'), findsNothing);
   });
 
@@ -176,9 +218,7 @@ void main() {
     await choose<Difficulty>(tester, 'Fácil');
     await startRound(tester);
 
-    await reveal(tester, find.text('Simular derrota'));
-    await tester.tap(find.text('Simular derrota'));
-    await tester.pumpAndSettle();
+    await loseRound(tester);
 
     expect(find.text('Derrota'), findsOneWidget);
 
@@ -187,7 +227,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(SetupScreen), findsOneWidget);
-    expect(find.byType(PendingRoundScreen), findsNothing);
+    expect(find.byType(GameScreen), findsNothing);
   });
 
   testWidgets('informs when every answer of a combination was used', (
@@ -203,9 +243,7 @@ void main() {
     await choose<Difficulty>(tester, 'Fácil');
     await startRound(tester);
 
-    await reveal(tester, find.text('Simular derrota'));
-    await tester.tap(find.text('Simular derrota'));
-    await tester.pumpAndSettle();
+    await loseRound(tester);
 
     await reveal(tester, find.text('Jogar novamente'));
     await tester.tap(find.text('Jogar novamente'));
@@ -229,17 +267,13 @@ void main() {
     await choose<Difficulty>(tester, 'Fácil');
     await startRound(tester);
 
-    await reveal(tester, find.text('Simular vitória'));
-    await tester.tap(find.text('Simular vitória'));
-    await tester.pumpAndSettle();
+    await winRound(tester);
 
     await reveal(tester, find.text('Jogar novamente'));
     await tester.tap(find.text('Jogar novamente'));
     await tester.pumpAndSettle();
 
-    await reveal(tester, find.text('Simular derrota'));
-    await tester.tap(find.text('Simular derrota'));
-    await tester.pumpAndSettle();
+    await loseRound(tester);
 
     await reveal(tester, find.text('Ver estatísticas da sessão'));
     await tester.tap(find.text('Ver estatísticas da sessão'));
