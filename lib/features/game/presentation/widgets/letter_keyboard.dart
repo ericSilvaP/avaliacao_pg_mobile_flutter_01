@@ -68,8 +68,19 @@ class _LetterKeyboardState extends State<LetterKeyboard> {
           Padding(
             padding: const EdgeInsets.only(bottom: AppSpacing.sm),
             child: SizedBox(
-              width: 240,
+              width: 160,
+              height: 32,
               child: SegmentedButton<KeyboardLayout>(
+                style: SegmentedButton.styleFrom(
+                  visualDensity: VisualDensity.compact,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  padding: EdgeInsets.zero,
+                  textStyle: const TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.5,
+                  ),
+                ),
                 showSelectedIcon: false,
                 expandedInsets: EdgeInsets.zero,
                 segments: [

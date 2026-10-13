@@ -198,15 +198,16 @@ void main() {
       final segmentedSize = tester.getSize(
         find.byType(SegmentedButton<KeyboardLayout>),
       );
-      expect(segmentedSize.width, equals(240.0));
+      expect(segmentedSize.width, equals(160.0));
+      expect(segmentedSize.height, equals(32.0));
 
       final buttons = find.byType(TextButton);
       expect(buttons, findsNWidgets(2));
 
       final qwertyWidth1 = tester.getSize(buttons.first).width;
       final abcWidth1 = tester.getSize(buttons.last).width;
-      expect(qwertyWidth1, equals(120.0));
-      expect(abcWidth1, equals(120.0));
+      expect(qwertyWidth1, equals(80.0));
+      expect(abcWidth1, equals(80.0));
 
       // Switch to ABC
       await tester.tap(find.text('ABC'));
