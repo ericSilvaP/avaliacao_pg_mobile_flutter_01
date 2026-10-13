@@ -67,20 +67,25 @@ class _LetterKeyboardState extends State<LetterKeyboard> {
         children: [
           Padding(
             padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-            child: SegmentedButton<KeyboardLayout>(
-              segments: [
-                for (final option in KeyboardLayout.values)
-                  ButtonSegment<KeyboardLayout>(
-                    value: option,
-                    label: Text(option.label),
-                  ),
-              ],
-              selected: {currentLayout},
-              onSelectionChanged: (selected) {
-                if (selected.isNotEmpty) {
-                  _onSelectLayout(selected.first);
-                }
-              },
+            child: SizedBox(
+              width: 240,
+              child: SegmentedButton<KeyboardLayout>(
+                showSelectedIcon: false,
+                expandedInsets: EdgeInsets.zero,
+                segments: [
+                  for (final option in KeyboardLayout.values)
+                    ButtonSegment<KeyboardLayout>(
+                      value: option,
+                      label: Text(option.label),
+                    ),
+                ],
+                selected: {currentLayout},
+                onSelectionChanged: (selected) {
+                  if (selected.isNotEmpty) {
+                    _onSelectLayout(selected.first);
+                  }
+                },
+              ),
             ),
           ),
           LayoutBuilder(
@@ -90,11 +95,14 @@ class _LetterKeyboardState extends State<LetterKeyboard> {
               final maxWidth = constraints.maxWidth.isFinite
                   ? constraints.maxWidth
                   : 360.0;
-              final maxCols = currentLayout.rows
+              // Reference the widest layout (QWERTY with 10 keys per row) so ABC layout
+              // keys match the exact same size as QWERTY keys.
+              final referenceMaxCols = KeyboardLayout.qwerty.rows
                   .map((r) => r.length)
                   .reduce(math.max);
               final rawKeyWidth =
-                  (maxWidth - (maxCols - 1) * horizontalGap) / maxCols;
+                  (maxWidth - (referenceMaxCols - 1) * horizontalGap) /
+                  referenceMaxCols;
               final keyWidth = rawKeyWidth.clamp(16.0, 48.0);
 
               return Column(

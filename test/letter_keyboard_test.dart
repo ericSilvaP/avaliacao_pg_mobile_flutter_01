@@ -159,5 +159,92 @@ void main() {
 
       expect(reportedLayout, KeyboardLayout.qwerty);
     });
+
+    testWidgets(
+      'does not show check confirmation icon on the selected layout segment',
+      (tester) async {
+        await tester.pumpWidget(
+          _wrap(
+            LetterKeyboard(
+              guessedLetters: const {},
+              wrongLetters: const {},
+              onLetterPressed: (_) {},
+            ),
+          ),
+        );
+
+        expect(find.byIcon(Icons.check), findsNothing);
+
+        await tester.tap(find.text('ABC'));
+        await tester.pumpAndSettle();
+
+        expect(find.byIcon(Icons.check), findsNothing);
+      },
+    );
+
+    testWidgets('layout selector buttons maintain static and equal size', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _wrap(
+          LetterKeyboard(
+            guessedLetters: const {},
+            wrongLetters: const {},
+            onLetterPressed: (_) {},
+          ),
+        ),
+      );
+
+      final segmentedSize = tester.getSize(
+        find.byType(SegmentedButton<KeyboardLayout>),
+      );
+      expect(segmentedSize.width, equals(240.0));
+
+      final buttons = find.byType(TextButton);
+      expect(buttons, findsNWidgets(2));
+
+      final qwertyWidth1 = tester.getSize(buttons.first).width;
+      final abcWidth1 = tester.getSize(buttons.last).width;
+      expect(qwertyWidth1, equals(120.0));
+      expect(abcWidth1, equals(120.0));
+
+      // Switch to ABC
+      await tester.tap(find.text('ABC'));
+      await tester.pumpAndSettle();
+
+      final qwertyWidth2 = tester.getSize(buttons.first).width;
+      final abcWidth2 = tester.getSize(buttons.last).width;
+      expect(qwertyWidth2, equals(qwertyWidth1));
+      expect(abcWidth2, equals(abcWidth1));
+      expect(qwertyWidth2, equals(abcWidth2));
+    });
+
+    testWidgets(
+      'ABC layout keys have the exact same size as QWERTY layout keys',
+      (tester) async {
+        await tester.pumpWidget(
+          _wrap(
+            LetterKeyboard(
+              guessedLetters: const {},
+              wrongLetters: const {},
+              layout: KeyboardLayout.qwerty,
+              onLetterPressed: (_) {},
+            ),
+          ),
+        );
+
+        final qwertyKeySize = tester.getSize(
+          find.widgetWithText(LetterKey, 'A'),
+        );
+
+        await tester.tap(find.text('ABC'));
+        await tester.pumpAndSettle();
+
+        final abcKeySize = tester.getSize(find.widgetWithText(LetterKey, 'A'));
+
+        expect(abcKeySize.width, equals(qwertyKeySize.width));
+        expect(abcKeySize.height, equals(qwertyKeySize.height));
+      },
+    );
   });
 }
