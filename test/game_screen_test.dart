@@ -120,8 +120,8 @@ void main() {
         // onRoundFinished is NOT called immediately
         expect(finishedResult, isNull);
 
-        // Advances after the 2-second delay
-        await tester.pump(const Duration(seconds: 2));
+        // Advances after the 5-second delay
+        await tester.pump(const Duration(seconds: 5));
         expect(finishedResult, isNotNull);
         expect(finishedResult!.isVictory, isTrue);
       },
@@ -173,8 +173,8 @@ void main() {
         // Callback not called yet
         expect(finishedResult, isNull);
 
-        // Advances after the 2-second delay
-        await tester.pump(const Duration(seconds: 2));
+        // Advances after the 5-second delay
+        await tester.pump(const Duration(seconds: 5));
         expect(finishedResult, isNotNull);
         expect(finishedResult!.isVictory, isFalse);
       },
@@ -278,8 +278,8 @@ void main() {
       await tester.tap(find.text('Abrir'));
       await tester.pumpAndSettle();
 
-      // Tap close button in AppBar
-      await tester.tap(find.byTooltip('Abandonar rodada'));
+      // Tap back button in AppBar
+      await tester.tap(find.byTooltip('Voltar'));
       await tester.pumpAndSettle();
 
       expect(find.text('Abandonar rodada?'), findsOneWidget);
@@ -293,7 +293,7 @@ void main() {
       expect(popped, isFalse);
 
       // Tap again and confirm
-      await tester.tap(find.byTooltip('Abandonar rodada'));
+      await tester.tap(find.byTooltip('Voltar'));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Abandonar'));
       await tester.pumpAndSettle();
@@ -301,14 +301,32 @@ void main() {
       expect(popped, isTrue);
     });
 
+    testWidgets('AppBar does not contain redundant close icon button', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _wrap(
+          GameScreen(
+            entry: _sampleEntry(),
+            category: AnswerCategory.animals,
+            difficulty: Difficulty.easy,
+            onRoundFinished: (_) {},
+          ),
+        ),
+      );
+
+      expect(find.byIcon(Icons.close_rounded), findsNothing);
+      expect(find.byIcon(Icons.arrow_back_rounded), findsOneWidget);
+    });
+
     testWidgets(
-      'switches between narrow and wide layout based on 600dp breakpoint',
+      'switches between narrow and wide layout based on 768dp breakpoint',
       (tester) async {
         addTearDown(tester.view.resetPhysicalSize);
         addTearDown(tester.view.resetDevicePixelRatio);
 
-        // Narrow (< 600)
-        tester.view.physicalSize = const Size(599, 800);
+        // Narrow (< 768)
+        tester.view.physicalSize = const Size(767, 800);
         tester.view.devicePixelRatio = 1.0;
 
         await tester.pumpWidget(
@@ -325,8 +343,8 @@ void main() {
         expect(find.byKey(const Key('game-narrow-layout')), findsOneWidget);
         expect(find.byKey(const Key('game-wide-layout')), findsNothing);
 
-        // Wide (>= 600)
-        tester.view.physicalSize = const Size(600, 800);
+        // Wide (>= 768)
+        tester.view.physicalSize = const Size(768, 800);
         await tester.pumpAndSettle();
 
         expect(find.byKey(const Key('game-wide-layout')), findsOneWidget);

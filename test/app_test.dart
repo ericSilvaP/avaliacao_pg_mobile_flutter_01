@@ -134,7 +134,7 @@ Future<void> winRound(WidgetTester tester) async {
   for (final l in letters) {
     await tapGameLetter(tester, l);
   }
-  await tester.pump(const Duration(seconds: 2));
+  await tester.pump(const Duration(seconds: 5));
   await tester.pumpAndSettle();
 }
 
@@ -148,7 +148,7 @@ Future<void> loseRound(WidgetTester tester) async {
       await tapGameLetter(tester, l);
     }
   }
-  await tester.pump(const Duration(seconds: 2));
+  await tester.pump(const Duration(seconds: 5));
   await tester.pumpAndSettle();
 }
 

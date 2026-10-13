@@ -44,12 +44,12 @@ Marcação: ao executar cada caso, anotar `[ok]` ou `[falha]` com o que foi obse
 - [ ] A preferência de layout de teclado é memorizada ao longo de toda a sessão entre partidas.
 - [ ] Ao tocar em uma letra correta: a letra é revelada em todas as posições correspondentes no tabuleiro (preservando acentos originais) e a tecla fica em destaque.
 - [ ] Ao tocar em uma letra incorreta: a tecla é esmaecida, o contador avança ("Erros: X de 6"), o marcador correspondente é preenchido e uma parte do monstro aparece na ordem fixa (cabeça viva → tronco → braço esquerdo → braço direito → perna esquerda → perna direita).
-- [ ] Vitória: ao descobrir todas as letras, surge o banner "Vitória!", o teclado é desabilitado e, após ~2 segundos, o app navega automaticamente para a tela de resultado.
-- [ ] Derrota: ao cometer o 6º erro, a cabeça do monstro troca para a versão derrotada (olhos em X), a resposta completa é revelada no tabuleiro, surge o banner "Derrota!", o teclado é desabilitado e, após ~2 segundos, o app navega automaticamente para a tela de resultado.
-- [ ] Tentativa de abandono: ao tocar na seta de voltar ou no botão de fechar durante a partida, o diálogo "Abandonar rodada?" é exibido. "Continuar jogando" mantém a partida; "Abandonar" cancela a rodada sem contabilizá-la nas estatísticas.
+- [ ] Vitória: ao descobrir todas as letras, surge o banner "Vitória!", o teclado é desabilitado e, após ~5 segundos, o app navega automaticamente para a tela de resultado.
+- [ ] Derrota: ao cometer o 6º erro, a cabeça do monstro troca para a versão derrotada (olhos em X), a resposta completa é revelada no tabuleiro, surge o banner "Derrota", o teclado é desabilitado e, após ~5 segundos, o app navega automaticamente para a tela de resultado.
+- [ ] Tentativa de abandono: ao tocar na seta de voltar durante a partida, o diálogo "Abandonar rodada?" é exibido. "Continuar jogando" mantém a partida; "Abandonar" cancela a rodada sem contabilizá-la nas estatísticas.
 - [ ] Responsividade:
-  - Em telas estreitas (< 600 dp) ou com texto aumentado (1.5x), o layout em coluna única rola suavemente sem estouro de pixels (`RenderFlex`).
-  - Em telas largas ou paisagem (≥ 600 dp), o layout adapta-se em duas colunas (esquerda: forca e progresso de erros; direita: cabeçalho, tabuleiro, dica e teclado).
+  - Em telas estreitas (< 768 dp) ou com texto aumentado (1.5x), o layout em coluna única acomoda os elementos com espaçamento arejado e rola suavemente sem estouro de pixels (`RenderFlex`).
+  - Em telas largas ou tablets (≥ 768 dp), o layout adapta-se em duas colunas (esquerda: forca e progresso de erros; direita: cabeçalho, tabuleiro, dica/status e teclado).
 
 ## 3. Casos especiais de respostas (seção 10.10)
 

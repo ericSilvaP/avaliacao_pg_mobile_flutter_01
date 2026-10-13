@@ -11,12 +11,11 @@ import '../../../src/domain/game_round.dart';
 import '../../../src/domain/round_result.dart';
 import 'widgets/answer_board.dart';
 import 'widgets/error_progress.dart';
+import 'widgets/game_status_slot.dart';
 import 'widgets/hangman_figure.dart';
-import 'widgets/hint_panel.dart';
 import 'widgets/keyboard_layout.dart';
 import 'widgets/letter_keyboard.dart';
 import 'widgets/round_info_header.dart';
-import 'widgets/round_outcome_banner.dart';
 
 class GameScreen extends StatefulWidget {
   const GameScreen({
@@ -28,8 +27,10 @@ class GameScreen extends StatefulWidget {
     this.initialLayout = KeyboardLayout.qwerty,
     this.layoutNotifier,
     this.round,
-    this.finishDelay = const Duration(seconds: 2),
+    this.finishDelay = const Duration(seconds: 5),
   });
+
+  static const double wideLayoutBreakpoint = 768.0;
 
   final AnswerEntry entry;
   final AnswerCategory category;
@@ -172,23 +173,12 @@ class GameScreenState extends State<GameScreen> {
               }
             },
           ),
-          actions: [
-            if (!_round.isFinished)
-              IconButton(
-                icon: const Icon(Icons.close_rounded),
-                tooltip: 'Abandonar rodada',
-                onPressed: () async {
-                  final confirmed = await _confirmAbandon(context);
-                  if (confirmed && context.mounted) {
-                    Navigator.of(context).pop();
-                  }
-                },
-              ),
-          ],
         ),
         body: SafeArea(
           child: Center(
-            child: MediaQuery.sizeOf(context).width >= 600
+            child:
+                MediaQuery.sizeOf(context).width >=
+                    GameScreen.wideLayoutBreakpoint
                 ? _buildWideLayout(context)
                 : _buildNarrowLayout(context),
           ),
@@ -198,63 +188,78 @@ class GameScreenState extends State<GameScreen> {
   }
 
   Widget _buildNarrowLayout(BuildContext context) {
-    return ConstrainedBox(
-      key: const Key('game-narrow-layout'),
-      constraints: const BoxConstraints(maxWidth: 480),
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.margin,
-          vertical: AppSpacing.sm,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            RoundInfoHeader(
-              category: widget.category,
-              difficulty: widget.difficulty,
-            ),
-            const SizedBox(height: AppSpacing.md),
-            SizedBox(
-              height: 190,
-              child: Center(
-                child: HangmanFigure(
-                  errors: _round.currentErrors,
-                  maxErrors: _round.maxErrors,
-                  status: _round.status,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final minHeight = constraints.maxHeight.isFinite
+            ? (constraints.maxHeight - (AppSpacing.md * 2)).clamp(
+                0.0,
+                double.infinity,
+              )
+            : 0.0;
+
+        return SingleChildScrollView(
+          key: const Key('game-narrow-layout'),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.margin,
+            vertical: AppSpacing.md,
+          ),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: minHeight, maxWidth: 480),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    RoundInfoHeader(
+                      category: widget.category,
+                      difficulty: widget.difficulty,
+                    ),
+                    const SizedBox(height: AppSpacing.lg),
+                    SizedBox(
+                      height: 190,
+                      child: Center(
+                        child: HangmanFigure(
+                          errors: _round.currentErrors,
+                          maxErrors: _round.maxErrors,
+                          status: _round.status,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    ErrorProgress(
+                      currentErrors: _round.currentErrors,
+                      maxErrors: _round.maxErrors,
+                    ),
+                    const SizedBox(height: AppSpacing.xl),
+                    AnswerBoard(displayedAnswer: _round.displayedAnswer),
+                    const SizedBox(height: AppSpacing.lg),
+                    GameStatusSlot(
+                      status: _round.status,
+                      hintUsed: _round.hintUsed,
+                      hint: _hint,
+                      onHintRequested: _onHintRequested,
+                    ),
+                  ],
                 ),
-              ),
+                Padding(
+                  padding: const EdgeInsets.only(top: AppSpacing.md),
+                  child: LetterKeyboard(
+                    guessedLetters: _round.guessedLetters,
+                    wrongLetters: _round.wrongLetters,
+                    isFinished: _round.isFinished,
+                    layout: _currentLayout,
+                    onLayoutChanged: _onLayoutChanged,
+                    onLetterPressed: _onLetterPressed,
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: AppSpacing.sm),
-            ErrorProgress(
-              currentErrors: _round.currentErrors,
-              maxErrors: _round.maxErrors,
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            AnswerBoard(displayedAnswer: _round.displayedAnswer),
-            const SizedBox(height: AppSpacing.lg),
-            HintPanel(
-              hintUsed: _round.hintUsed,
-              hint: _hint,
-              isFinished: _round.isFinished,
-              onHintRequested: _onHintRequested,
-            ),
-            const SizedBox(height: AppSpacing.md),
-            if (_round.isFinished) ...[
-              RoundOutcomeBanner(status: _round.status),
-              const SizedBox(height: AppSpacing.md),
-            ],
-            LetterKeyboard(
-              guessedLetters: _round.guessedLetters,
-              wrongLetters: _round.wrongLetters,
-              isFinished: _round.isFinished,
-              layout: _currentLayout,
-              onLayoutChanged: _onLayoutChanged,
-              onLetterPressed: _onLetterPressed,
-            ),
-            const SizedBox(height: AppSpacing.md),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
@@ -265,7 +270,7 @@ class GameScreenState extends State<GameScreen> {
       child: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.margin,
-          vertical: AppSpacing.sm,
+          vertical: AppSpacing.md,
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -306,17 +311,13 @@ class GameScreenState extends State<GameScreen> {
                   const SizedBox(height: AppSpacing.md),
                   AnswerBoard(displayedAnswer: _round.displayedAnswer),
                   const SizedBox(height: AppSpacing.md),
-                  HintPanel(
+                  GameStatusSlot(
+                    status: _round.status,
                     hintUsed: _round.hintUsed,
                     hint: _hint,
-                    isFinished: _round.isFinished,
                     onHintRequested: _onHintRequested,
                   ),
                   const SizedBox(height: AppSpacing.md),
-                  if (_round.isFinished) ...[
-                    RoundOutcomeBanner(status: _round.status),
-                    const SizedBox(height: AppSpacing.md),
-                  ],
                   LetterKeyboard(
                     guessedLetters: _round.guessedLetters,
                     wrongLetters: _round.wrongLetters,
