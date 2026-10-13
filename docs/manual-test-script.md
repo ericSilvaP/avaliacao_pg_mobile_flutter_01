@@ -32,20 +32,24 @@ Marcação: ao executar cada caso, anotar `[ok]` ou `[falha]` com o que foi obse
 - [ ] "Voltar" no diálogo não inicia a partida.
 - [ ] "Iniciar partida" no diálogo avança para a tela de partida.
 
-## 2. Rodada provisória, vitória e derrota (RF03, RF10, RF11)
+## 2. Interface da partida e jogabilidade (RF03, RF05, RF06, RF07, RF08, RF09, RF10, RF11, RNF02)
 
-> Enquanto a interface real do Integrante 3 não chegar, a tela de partida é a
-> provisória: ela exibe a resposta sorteada e as dicas, e os botões de simulação
-> encerram a rodada pelo domínio `GameRound` (vitória = todas as letras reveladas;
-> derrota = limite de erros atingido).
-
-- [ ] A tela de partida mostra categoria, dificuldade, resposta sorteada e dicas.
-- [ ] "Simular vitória" abre o resultado com "Vitória!", a resposta completa,
-      0 erros e dica "Não".
-- [ ] "Simular derrota" abre o resultado com "Derrota", a resposta completa,
-      6 erros e dica "Não".
-- [ ] "Abandonar rodada" volta para a configuração **sem** contar a rodada
-      nas estatísticas.
+- [ ] A tela de partida exibe cabeçalho com chips de categoria e dificuldade.
+- [ ] A figura da forca começa apenas com a estrutura da forca visível.
+- [ ] O progresso de erros inicia em "Erros: 0 de 6" com todos os 6 marcadores vazios.
+- [ ] O tabuleiro oculta letras jogáveis com traços (`_`) e mantém espaços e hífens visíveis desde o início.
+- [ ] O botão "Pedir dica" está visível e habilitado. Ao tocar, exibe o cartão da dica com "Dica utilizada" e não permite novo pedido.
+- [ ] O teclado virtual exibe 26 teclas e o seletor de layout (QWERTY / ABC).
+- [ ] Ao alternar entre QWERTY e ABC, o layout reorganiza as teclas preservando o estado de acertos e erros.
+- [ ] A preferência de layout de teclado é memorizada ao longo de toda a sessão entre partidas.
+- [ ] Ao tocar em uma letra correta: a letra é revelada em todas as posições correspondentes no tabuleiro (preservando acentos originais) e a tecla fica em destaque.
+- [ ] Ao tocar em uma letra incorreta: a tecla é esmaecida, o contador avança ("Erros: X de 6"), o marcador correspondente é preenchido e uma parte do monstro aparece na ordem fixa (cabeça viva → tronco → braço esquerdo → braço direito → perna esquerda → perna direita).
+- [ ] Vitória: ao descobrir todas as letras, surge o banner "Vitória!", o teclado é desabilitado e, após ~2 segundos, o app navega automaticamente para a tela de resultado.
+- [ ] Derrota: ao cometer o 6º erro, a cabeça do monstro troca para a versão derrotada (olhos em X), a resposta completa é revelada no tabuleiro, surge o banner "Derrota!", o teclado é desabilitado e, após ~2 segundos, o app navega automaticamente para a tela de resultado.
+- [ ] Tentativa de abandono: ao tocar na seta de voltar ou no botão de fechar durante a partida, o diálogo "Abandonar rodada?" é exibido. "Continuar jogando" mantém a partida; "Abandonar" cancela a rodada sem contabilizá-la nas estatísticas.
+- [ ] Responsividade:
+  - Em telas estreitas (< 600 dp) ou com texto aumentado (1.5x), o layout em coluna única rola suavemente sem estouro de pixels (`RenderFlex`).
+  - Em telas largas ou paisagem (≥ 600 dp), o layout adapta-se em duas colunas (esquerda: forca e progresso de erros; direita: cabeçalho, tabuleiro, dica e teclado).
 
 ## 3. Casos especiais de respostas (seção 10.10)
 
@@ -118,8 +122,3 @@ Após pelo menos uma vitória, uma derrota e uma rodada abandonada:
 - [ ] O app funciona offline (sem qualquer chamada de rede).
 - [ ] Tema escuro e fontes personalizadas carregam corretamente.
 
----
-
-**Pendência de atualização**: quando a `GameScreen` do Integrante 3 substituir a
-tela de partida provisória, revisar os itens 2 e 6 para exercitar teclado de
-letras, tecla de dica (RF09) e desenho progressivo da forca (RF08).
