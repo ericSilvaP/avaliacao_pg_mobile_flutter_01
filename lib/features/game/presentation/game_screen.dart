@@ -51,6 +51,7 @@ class GameScreenState extends State<GameScreen> {
   Timer? _finishTimer;
 
   GameRound get round => _round;
+  KeyboardLayout get currentLayout => _currentLayout;
 
   @override
   void initState() {

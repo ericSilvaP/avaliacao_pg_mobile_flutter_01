@@ -8,6 +8,7 @@ import 'package:avaliacao_pg_mobile_flutter_01/domain/enums/answer_category.dart
 import 'package:avaliacao_pg_mobile_flutter_01/domain/enums/difficulty.dart';
 import 'package:avaliacao_pg_mobile_flutter_01/features/about/about_screen.dart';
 import 'package:avaliacao_pg_mobile_flutter_01/features/game/presentation/game_screen.dart';
+import 'package:avaliacao_pg_mobile_flutter_01/features/game/presentation/widgets/keyboard_layout.dart';
 import 'package:avaliacao_pg_mobile_flutter_01/features/game/presentation/widgets/letter_key.dart';
 import 'package:avaliacao_pg_mobile_flutter_01/features/setup/setup_screen.dart';
 import 'package:avaliacao_pg_mobile_flutter_01/src/domain/text_format.dart';
@@ -284,4 +285,49 @@ void main() {
     expect(find.text('1 vitória(s) · 1 derrota(s)'), findsOneWidget);
     expect(find.text('50,0%'), findsNWidgets(2));
   });
+
+  testWidgets(
+    'remembers keyboard layout selection across rounds in the session',
+    (tester) async {
+      final repository = FakeAnswerRepository(
+        buildEntries([
+          ('COELHO', 'Mamífero de orelhas longas.'),
+          ('GATO DOMÉSTICO', 'Felino criado como animal de companhia.'),
+        ]),
+      );
+
+      await pumpApp(tester, repository: repository);
+
+      await choose<AnswerCategory>(tester, 'Animais');
+      await choose<Difficulty>(tester, 'Fácil');
+      await startRound(tester);
+
+      // Initial keyboard in round 1 is QWERTY
+      expect(find.byType(GameScreen), findsOneWidget);
+      final initialGame = tester.state<GameScreenState>(
+        find.byType(GameScreen),
+      );
+      expect(initialGame.currentLayout, KeyboardLayout.qwerty);
+
+      // Switch layout to ABC (alphabetical) in round 1
+      await reveal(tester, find.text('ABC'));
+      await tester.tap(find.text('ABC'));
+      await tester.pumpAndSettle();
+
+      expect(initialGame.currentLayout, KeyboardLayout.alphabetical);
+
+      // Win round 1
+      await winRound(tester);
+
+      // Start round 2
+      await reveal(tester, find.text('Jogar novamente'));
+      await tester.tap(find.text('Jogar novamente'));
+      await tester.pumpAndSettle();
+
+      // Round 2 must retain ABC (alphabetical) layout
+      expect(find.byType(GameScreen), findsOneWidget);
+      final round2Game = tester.state<GameScreenState>(find.byType(GameScreen));
+      expect(round2Game.currentLayout, KeyboardLayout.alphabetical);
+    },
+  );
 }

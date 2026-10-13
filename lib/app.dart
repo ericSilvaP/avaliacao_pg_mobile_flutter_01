@@ -5,6 +5,7 @@ import 'domain/enums/answer_category.dart';
 import 'domain/enums/difficulty.dart';
 import 'features/about/about_screen.dart';
 import 'features/game/presentation/game_screen.dart';
+import 'features/game/presentation/widgets/keyboard_layout.dart';
 import 'features/result/result_screen.dart';
 import 'features/session/answer_draw_result.dart';
 import 'features/session/session_manager.dart';
@@ -25,6 +26,15 @@ class HangmanApp extends StatefulWidget {
 
 class _HangmanAppState extends State<HangmanApp> {
   late final SessionManager _session = SessionManager(widget.repository);
+  final ValueNotifier<KeyboardLayout> _keyboardLayout = ValueNotifier(
+    KeyboardLayout.qwerty,
+  );
+
+  @override
+  void dispose() {
+    _keyboardLayout.dispose();
+    super.dispose();
+  }
 
   Future<void> _startRound(
     BuildContext context,
@@ -46,6 +56,7 @@ class _HangmanAppState extends State<HangmanApp> {
               entry: entry,
               category: category,
               difficulty: difficulty,
+              layoutNotifier: _keyboardLayout,
               onRoundFinished: (result) => _finishRound(
                 context,
                 result: result,
