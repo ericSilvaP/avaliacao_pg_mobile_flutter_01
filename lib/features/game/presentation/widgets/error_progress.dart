@@ -25,8 +25,9 @@ class ErrorProgress extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          Wrap(
+            alignment: WrapAlignment.center,
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               Text(
                 'Erros: ',
@@ -46,11 +47,12 @@ class ErrorProgress extends StatelessWidget {
             ],
           ),
           const SizedBox(height: AppSpacing.sm),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          Wrap(
+            alignment: WrapAlignment.center,
+            spacing: AppSpacing.xs,
+            runSpacing: AppSpacing.xs,
             children: [
-              for (var i = 0; i < maxErrors; i++) ...[
-                if (i > 0) const SizedBox(width: AppSpacing.xs),
+              for (var i = 0; i < maxErrors; i++)
                 AnimatedContainer(
                   duration: const Duration(milliseconds: 250),
                   width: 20,
@@ -65,7 +67,6 @@ class ErrorProgress extends StatelessWidget {
                         : Border.all(color: AppColors.outlineVariant, width: 1),
                   ),
                 ),
-              ],
             ],
           ),
         ],

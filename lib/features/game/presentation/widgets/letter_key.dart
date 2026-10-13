@@ -84,11 +84,15 @@ class LetterKey extends StatelessWidget {
           onTap: _isClickable ? onPressed : null,
           borderRadius: BorderRadius.circular(AppRadius.base),
           child: Container(
-            constraints: const BoxConstraints(minHeight: 44, minWidth: 28),
+            constraints: const BoxConstraints(minHeight: 44),
             alignment: Alignment.center,
-            child: Text(
-              letter,
-              style: AppTextStyles.runeLabel.copyWith(color: _textColor),
+            padding: const EdgeInsets.symmetric(horizontal: 2),
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                letter,
+                style: AppTextStyles.runeLabel.copyWith(color: _textColor),
+              ),
             ),
           ),
         ),

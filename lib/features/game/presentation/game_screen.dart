@@ -187,64 +187,148 @@ class GameScreenState extends State<GameScreen> {
         ),
         body: SafeArea(
           child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 480),
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.margin,
-                  vertical: AppSpacing.sm,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    RoundInfoHeader(
-                      category: widget.category,
-                      difficulty: widget.difficulty,
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-                    SizedBox(
-                      height: 190,
-                      child: Center(
-                        child: HangmanFigure(
-                          errors: _round.currentErrors,
-                          maxErrors: _round.maxErrors,
-                          status: _round.status,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.sm),
-                    ErrorProgress(
-                      currentErrors: _round.currentErrors,
-                      maxErrors: _round.maxErrors,
-                    ),
-                    const SizedBox(height: AppSpacing.lg),
-                    AnswerBoard(displayedAnswer: _round.displayedAnswer),
-                    const SizedBox(height: AppSpacing.lg),
-                    HintPanel(
-                      hintUsed: _round.hintUsed,
-                      hint: _hint,
-                      isFinished: _round.isFinished,
-                      onHintRequested: _onHintRequested,
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-                    if (_round.isFinished) ...[
-                      RoundOutcomeBanner(status: _round.status),
-                      const SizedBox(height: AppSpacing.md),
-                    ],
-                    LetterKeyboard(
-                      guessedLetters: _round.guessedLetters,
-                      wrongLetters: _round.wrongLetters,
-                      isFinished: _round.isFinished,
-                      layout: _currentLayout,
-                      onLayoutChanged: _onLayoutChanged,
-                      onLetterPressed: _onLetterPressed,
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-                  ],
+            child: MediaQuery.sizeOf(context).width >= 600
+                ? _buildWideLayout(context)
+                : _buildNarrowLayout(context),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNarrowLayout(BuildContext context) {
+    return ConstrainedBox(
+      key: const Key('game-narrow-layout'),
+      constraints: const BoxConstraints(maxWidth: 480),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.margin,
+          vertical: AppSpacing.sm,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            RoundInfoHeader(
+              category: widget.category,
+              difficulty: widget.difficulty,
+            ),
+            const SizedBox(height: AppSpacing.md),
+            SizedBox(
+              height: 190,
+              child: Center(
+                child: HangmanFigure(
+                  errors: _round.currentErrors,
+                  maxErrors: _round.maxErrors,
+                  status: _round.status,
                 ),
               ),
             ),
-          ),
+            const SizedBox(height: AppSpacing.sm),
+            ErrorProgress(
+              currentErrors: _round.currentErrors,
+              maxErrors: _round.maxErrors,
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            AnswerBoard(displayedAnswer: _round.displayedAnswer),
+            const SizedBox(height: AppSpacing.lg),
+            HintPanel(
+              hintUsed: _round.hintUsed,
+              hint: _hint,
+              isFinished: _round.isFinished,
+              onHintRequested: _onHintRequested,
+            ),
+            const SizedBox(height: AppSpacing.md),
+            if (_round.isFinished) ...[
+              RoundOutcomeBanner(status: _round.status),
+              const SizedBox(height: AppSpacing.md),
+            ],
+            LetterKeyboard(
+              guessedLetters: _round.guessedLetters,
+              wrongLetters: _round.wrongLetters,
+              isFinished: _round.isFinished,
+              layout: _currentLayout,
+              onLayoutChanged: _onLayoutChanged,
+              onLetterPressed: _onLetterPressed,
+            ),
+            const SizedBox(height: AppSpacing.md),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWideLayout(BuildContext context) {
+    return ConstrainedBox(
+      key: const Key('game-wide-layout'),
+      constraints: const BoxConstraints(maxWidth: 960),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.margin,
+          vertical: AppSpacing.sm,
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              flex: 4,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  SizedBox(
+                    height: 240,
+                    child: Center(
+                      child: HangmanFigure(
+                        errors: _round.currentErrors,
+                        maxErrors: _round.maxErrors,
+                        status: _round.status,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  ErrorProgress(
+                    currentErrors: _round.currentErrors,
+                    maxErrors: _round.maxErrors,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: AppSpacing.lg),
+            Expanded(
+              flex: 6,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  RoundInfoHeader(
+                    category: widget.category,
+                    difficulty: widget.difficulty,
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  AnswerBoard(displayedAnswer: _round.displayedAnswer),
+                  const SizedBox(height: AppSpacing.md),
+                  HintPanel(
+                    hintUsed: _round.hintUsed,
+                    hint: _hint,
+                    isFinished: _round.isFinished,
+                    onHintRequested: _onHintRequested,
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  if (_round.isFinished) ...[
+                    RoundOutcomeBanner(status: _round.status),
+                    const SizedBox(height: AppSpacing.md),
+                  ],
+                  LetterKeyboard(
+                    guessedLetters: _round.guessedLetters,
+                    wrongLetters: _round.wrongLetters,
+                    isFinished: _round.isFinished,
+                    layout: _currentLayout,
+                    onLayoutChanged: _onLayoutChanged,
+                    onLetterPressed: _onLetterPressed,
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );

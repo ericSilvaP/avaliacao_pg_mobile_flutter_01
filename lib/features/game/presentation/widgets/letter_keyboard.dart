@@ -85,7 +85,7 @@ class _LetterKeyboardState extends State<LetterKeyboard> {
           ),
           LayoutBuilder(
             builder: (context, constraints) {
-              const horizontalGap = 4.0;
+              final horizontalGap = constraints.maxWidth < 340 ? 3.0 : 4.0;
               const verticalGap = 6.0;
               final maxWidth = constraints.maxWidth.isFinite
                   ? constraints.maxWidth
@@ -95,7 +95,7 @@ class _LetterKeyboardState extends State<LetterKeyboard> {
                   .reduce(math.max);
               final rawKeyWidth =
                   (maxWidth - (maxCols - 1) * horizontalGap) / maxCols;
-              final keyWidth = rawKeyWidth.clamp(28.0, 48.0);
+              final keyWidth = rawKeyWidth.clamp(16.0, 48.0);
 
               return Column(
                 mainAxisSize: MainAxisSize.min,
@@ -110,7 +110,7 @@ class _LetterKeyboardState extends State<LetterKeyboard> {
                           i < currentLayout.rows[r].length;
                           i++
                         ) ...[
-                          if (i > 0) const SizedBox(width: horizontalGap),
+                          if (i > 0) SizedBox(width: horizontalGap),
                           SizedBox(
                             width: keyWidth,
                             child: LetterKey(

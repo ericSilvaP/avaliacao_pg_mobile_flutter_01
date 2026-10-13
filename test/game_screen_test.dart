@@ -300,5 +300,110 @@ void main() {
 
       expect(popped, isTrue);
     });
+
+    testWidgets(
+      'switches between narrow and wide layout based on 600dp breakpoint',
+      (tester) async {
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+
+        // Narrow (< 600)
+        tester.view.physicalSize = const Size(599, 800);
+        tester.view.devicePixelRatio = 1.0;
+
+        await tester.pumpWidget(
+          _wrap(
+            GameScreen(
+              entry: _sampleEntry(),
+              category: AnswerCategory.animals,
+              difficulty: Difficulty.easy,
+              onRoundFinished: (_) {},
+            ),
+          ),
+        );
+
+        expect(find.byKey(const Key('game-narrow-layout')), findsOneWidget);
+        expect(find.byKey(const Key('game-wide-layout')), findsNothing);
+
+        // Wide (>= 600)
+        tester.view.physicalSize = const Size(600, 800);
+        await tester.pumpAndSettle();
+
+        expect(find.byKey(const Key('game-wide-layout')), findsOneWidget);
+        expect(find.byKey(const Key('game-narrow-layout')), findsNothing);
+      },
+    );
+
+    testWidgets('plays round in wide layout via letter taps', (tester) async {
+      tester.view.physicalSize = const Size(800, 600);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await tester.pumpWidget(
+        _wrap(
+          GameScreen(
+            entry: _sampleEntry(answer: 'RIO'),
+            category: AnswerCategory.technology,
+            difficulty: Difficulty.easy,
+            onRoundFinished: (_) {},
+          ),
+        ),
+      );
+
+      expect(find.byKey(const Key('game-wide-layout')), findsOneWidget);
+      expect(find.byType(HangmanFigure), findsOneWidget);
+      expect(find.byType(ErrorProgress), findsOneWidget);
+      expect(find.byType(RoundInfoHeader), findsOneWidget);
+      expect(find.byType(AnswerBoard), findsOneWidget);
+      expect(find.byType(LetterKeyboard), findsOneWidget);
+
+      await _tapKey(tester, 'R');
+      expect(find.text('R'), findsNWidgets(2));
+    });
+
+    testWidgets(
+      'supports 320dp width with 1.5x text scale for all required plan answers without overflow',
+      (tester) async {
+        tester.view.physicalSize = const Size(320, 640);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+
+        final testAnswers = [
+          'ARTICULAÇÃO TÊMPORO-MANDIBULAR',
+          'CORRIDA COM OBSTÁCULOS',
+          'CONTROLE DE VERSÃO',
+          'QUATI SUL-AMERICANO',
+        ];
+
+        for (final answer in testAnswers) {
+          await tester.pumpWidget(
+            MaterialApp(
+              theme: AppTheme.dark(),
+              home: MediaQuery(
+                data: const MediaQueryData(
+                  size: Size(320, 640),
+                  textScaler: TextScaler.linear(1.5),
+                ),
+                child: GameScreen(
+                  entry: _sampleEntry(answer: answer),
+                  category: AnswerCategory.animals,
+                  difficulty: Difficulty.hard,
+                  onRoundFinished: (_) {},
+                ),
+              ),
+            ),
+          );
+
+          expect(
+            tester.takeException(),
+            isNull,
+            reason: 'Overflow or error on $answer',
+          );
+          expect(find.byKey(const Key('game-narrow-layout')), findsOneWidget);
+        }
+      },
+    );
   });
 }
