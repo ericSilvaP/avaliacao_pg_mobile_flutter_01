@@ -4,9 +4,10 @@ import 'data/repositories/answer_repository.dart';
 import 'domain/enums/answer_category.dart';
 import 'domain/enums/difficulty.dart';
 import 'features/about/about_screen.dart';
+import 'features/game/presentation/game_screen.dart';
+import 'features/game/presentation/widgets/keyboard_layout.dart';
 import 'features/result/result_screen.dart';
 import 'features/session/answer_draw_result.dart';
-import 'features/session/pending_round_screen.dart';
 import 'features/session/session_manager.dart';
 import 'features/setup/setup_screen.dart';
 import 'features/statistics/statistics_screen.dart';
@@ -25,6 +26,15 @@ class HangmanApp extends StatefulWidget {
 
 class _HangmanAppState extends State<HangmanApp> {
   late final SessionManager _session = SessionManager(widget.repository);
+  final ValueNotifier<KeyboardLayout> _keyboardLayout = ValueNotifier(
+    KeyboardLayout.qwerty,
+  );
+
+  @override
+  void dispose() {
+    _keyboardLayout.dispose();
+    super.dispose();
+  }
 
   Future<void> _startRound(
     BuildContext context,
@@ -42,10 +52,11 @@ class _HangmanAppState extends State<HangmanApp> {
       case DrawnAnswer(:final entry):
         await Navigator.of(context).push(
           MaterialPageRoute<void>(
-            builder: (_) => PendingRoundScreen(
+            builder: (_) => GameScreen(
               entry: entry,
               category: category,
               difficulty: difficulty,
+              layoutNotifier: _keyboardLayout,
               onRoundFinished: (result) => _finishRound(
                 context,
                 result: result,
