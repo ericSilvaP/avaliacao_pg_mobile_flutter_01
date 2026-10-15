@@ -15,6 +15,9 @@ import 'shared/presentation/enum_labels.dart';
 import 'shared/theme/app_theme.dart';
 import 'src/domain/round_result.dart';
 
+const String _victoryLogoAssetPath = 'assets/images/purple-term-logo.png';
+const String _defeatLogoAssetPath = 'assets/images/purple-term-dead-logo.png';
+
 class HangmanApp extends StatefulWidget {
   const HangmanApp({super.key, required this.repository});
 
@@ -94,8 +97,8 @@ class _HangmanAppState extends State<HangmanApp> {
       MaterialPageRoute<void>(
         builder: (_) => ResultScreen(
           result: result,
-          victoryLogoAssetPath: 'assets/images/purple-term-logo.png',
-          defeatLogoAssetPath: 'assets/images/purple-term-dead-logo.png',
+          victoryLogoAssetPath: _victoryLogoAssetPath,
+          defeatLogoAssetPath: _defeatLogoAssetPath,
           onPlayAgain: () {
             Navigator.of(context).popUntil((route) => route.isFirst);
             _startRound(context, category, difficulty);
@@ -149,7 +152,7 @@ class _HangmanAppState extends State<HangmanApp> {
       home: Builder(
         builder: (context) => SetupScreen(
           repository: widget.repository,
-          logoAssetPath: 'assets/images/purple-term-logo.png',
+            logoAssetPath: _victoryLogoAssetPath,
           onStart: (category, difficulty) =>
               _startRound(context, category, difficulty),
           onOpenStatistics: () => _openStatistics(context),
