@@ -31,6 +31,12 @@ class GameScreen extends StatefulWidget {
   });
 
   static const double wideLayoutBreakpoint = 768.0;
+  static const double narrowHangmanPanelHeight = 190;
+  static const double wideHangmanPanelHeight = 240;
+  static const double narrowContentMaxWidth = 480;
+  static const double wideContentMaxWidth = 960;
+  static const int wideLeftPanelFlex = 4;
+  static const int wideRightPanelFlex = 6;
 
   final AnswerEntry entry;
   final AnswerCategory category;
@@ -255,7 +261,10 @@ class GameScreenState extends State<GameScreen> {
             vertical: AppSpacing.md,
           ),
           child: ConstrainedBox(
-            constraints: BoxConstraints(minHeight: minHeight, maxWidth: 480),
+            constraints: BoxConstraints(
+              minHeight: minHeight,
+              maxWidth: GameScreen.narrowContentMaxWidth,
+            ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -266,7 +275,7 @@ class GameScreenState extends State<GameScreen> {
                   children: [
                     _buildRoundInfoHeader(),
                     const SizedBox(height: AppSpacing.lg),
-                    _buildHangmanPanel(190),
+                    _buildHangmanPanel(GameScreen.narrowHangmanPanelHeight),
                     const SizedBox(height: AppSpacing.md),
                     _buildErrorProgress(),
                     const SizedBox(height: AppSpacing.xl),
@@ -290,7 +299,9 @@ class GameScreenState extends State<GameScreen> {
   Widget _buildWideLayout(BuildContext context) {
     return ConstrainedBox(
       key: const Key('game-wide-layout'),
-      constraints: const BoxConstraints(maxWidth: 960),
+      constraints: const BoxConstraints(
+        maxWidth: GameScreen.wideContentMaxWidth,
+      ),
       child: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.margin,
@@ -300,11 +311,11 @@ class GameScreenState extends State<GameScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
-              flex: 4,
+              flex: GameScreen.wideLeftPanelFlex,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  _buildHangmanPanel(240),
+                  _buildHangmanPanel(GameScreen.wideHangmanPanelHeight),
                   const SizedBox(height: AppSpacing.md),
                   _buildErrorProgress(),
                 ],
@@ -312,7 +323,7 @@ class GameScreenState extends State<GameScreen> {
             ),
             const SizedBox(width: AppSpacing.lg),
             Expanded(
-              flex: 6,
+              flex: GameScreen.wideRightPanelFlex,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
