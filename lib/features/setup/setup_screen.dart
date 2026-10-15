@@ -31,6 +31,8 @@ class SetupScreen extends StatefulWidget {
 }
 
 class _SetupScreenState extends State<SetupScreen> {
+  static const double _contentMaxWidth = 448;
+
   late Future<List<AnswerCategory>> _categoriesFuture;
   Future<List<Difficulty>>? _difficultiesFuture;
   AnswerCategory? _category;
@@ -104,9 +106,12 @@ class _SetupScreenState extends State<SetupScreen> {
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 448),
+            constraints: const BoxConstraints(maxWidth: _contentMaxWidth),
             child: ListView(
-              padding: const EdgeInsets.fromLTRB(16, 32, 16, 32),
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.margin,
+                vertical: AppSpacing.xxl,
+              ),
               children: [
                 SetupHeader(logoAssetPath: widget.logoAssetPath),
                 const SizedBox(height: 48),

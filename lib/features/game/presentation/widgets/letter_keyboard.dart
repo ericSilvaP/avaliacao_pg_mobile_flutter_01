@@ -31,6 +31,10 @@ class LetterKeyboard extends StatefulWidget {
 }
 
 class _LetterKeyboardState extends State<LetterKeyboard> {
+  static const double _fallbackMaxWidth = 360;
+  static const double _minKeyWidth = 16;
+  static const double _maxKeyWidth = 48;
+
   late KeyboardLayout _internalLayout = widget.initialLayout;
 
   KeyboardLayout get _effectiveLayout => widget.layout ?? _internalLayout;
@@ -105,7 +109,7 @@ class _LetterKeyboardState extends State<LetterKeyboard> {
               const verticalGap = 6.0;
               final maxWidth = constraints.maxWidth.isFinite
                   ? constraints.maxWidth
-                  : 360.0;
+                  : _fallbackMaxWidth;
               // Reference the widest layout (QWERTY with 10 keys per row) so ABC layout
               // keys match the exact same size as QWERTY keys.
               final referenceMaxCols = KeyboardLayout.qwerty.rows
@@ -114,7 +118,7 @@ class _LetterKeyboardState extends State<LetterKeyboard> {
               final rawKeyWidth =
                   (maxWidth - (referenceMaxCols - 1) * horizontalGap) /
                   referenceMaxCols;
-              final keyWidth = rawKeyWidth.clamp(16.0, 48.0);
+              final keyWidth = rawKeyWidth.clamp(_minKeyWidth, _maxKeyWidth);
 
               return Column(
                 mainAxisSize: MainAxisSize.min,

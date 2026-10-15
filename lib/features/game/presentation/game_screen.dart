@@ -7,8 +7,8 @@ import '../../../domain/enums/answer_category.dart';
 import '../../../domain/enums/difficulty.dart';
 import '../../../shared/theme/app_colors.dart';
 import '../../../shared/theme/app_theme.dart';
-import '../../../src/domain/game_round.dart';
-import '../../../src/domain/round_result.dart';
+import '../../../domain/game_round.dart';
+import '../../../domain/round_result.dart';
 import 'widgets/answer_board.dart';
 import 'widgets/error_progress.dart';
 import 'widgets/game_status_slot.dart';
@@ -31,6 +31,12 @@ class GameScreen extends StatefulWidget {
   });
 
   static const double wideLayoutBreakpoint = 768.0;
+  static const double narrowHangmanPanelHeight = 190;
+  static const double wideHangmanPanelHeight = 240;
+  static const double narrowContentMaxWidth = 480;
+  static const double wideContentMaxWidth = 960;
+  static const int wideLeftPanelFlex = 4;
+  static const int wideRightPanelFlex = 6;
 
   final AnswerEntry entry;
   final AnswerCategory category;
@@ -146,17 +152,21 @@ class GameScreenState extends State<GameScreen> {
     return shouldAbandon ?? false;
   }
 
+  Future<void> _abandonRound() async {
+    final navigator = Navigator.of(context);
+    final confirmed = await _confirmAbandon(context);
+    if (confirmed && mounted) {
+      navigator.pop();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return PopScope(
       canPop: _round.isFinished,
       onPopInvokedWithResult: (didPop, result) async {
         if (didPop) return;
-        final navigator = Navigator.of(context);
-        final confirmed = await _confirmAbandon(context);
-        if (confirmed && mounted) {
-          navigator.pop();
-        }
+        await _abandonRound();
       },
       child: Scaffold(
         backgroundColor: AppColors.background,
@@ -166,12 +176,7 @@ class GameScreenState extends State<GameScreen> {
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_rounded),
             tooltip: 'Voltar',
-            onPressed: () async {
-              final confirmed = await _confirmAbandon(context);
-              if (confirmed && context.mounted) {
-                Navigator.of(context).pop();
-              }
-            },
+            onPressed: _abandonRound,
           ),
         ),
         body: SafeArea(
@@ -184,6 +189,56 @@ class GameScreenState extends State<GameScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildRoundInfoHeader() {
+    return RoundInfoHeader(
+      category: widget.category,
+      difficulty: widget.difficulty,
+    );
+  }
+
+  Widget _buildHangmanPanel(double height) {
+    return SizedBox(
+      height: height,
+      child: Center(
+        child: HangmanFigure(
+          errors: _round.currentErrors,
+          status: _round.status,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildErrorProgress() {
+    return ErrorProgress(
+      currentErrors: _round.currentErrors,
+      maxErrors: _round.maxErrors,
+    );
+  }
+
+  Widget _buildAnswerBoard() {
+    return AnswerBoard(displayedAnswer: _round.displayedAnswer);
+  }
+
+  Widget _buildStatusSlot() {
+    return GameStatusSlot(
+      status: _round.status,
+      hintUsed: _round.hintUsed,
+      hint: _hint,
+      onHintRequested: _onHintRequested,
+    );
+  }
+
+  Widget _buildKeyboard() {
+    return LetterKeyboard(
+      guessedLetters: _round.guessedLetters,
+      wrongLetters: _round.wrongLetters,
+      isFinished: _round.isFinished,
+      layout: _currentLayout,
+      onLayoutChanged: _onLayoutChanged,
+      onLetterPressed: _onLetterPressed,
     );
   }
 
@@ -204,7 +259,10 @@ class GameScreenState extends State<GameScreen> {
             vertical: AppSpacing.md,
           ),
           child: ConstrainedBox(
-            constraints: BoxConstraints(minHeight: minHeight, maxWidth: 480),
+            constraints: BoxConstraints(
+              minHeight: minHeight,
+              maxWidth: GameScreen.narrowContentMaxWidth,
+            ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -213,47 +271,20 @@ class GameScreenState extends State<GameScreen> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    RoundInfoHeader(
-                      category: widget.category,
-                      difficulty: widget.difficulty,
-                    ),
+                    _buildRoundInfoHeader(),
                     const SizedBox(height: AppSpacing.lg),
-                    SizedBox(
-                      height: 190,
-                      child: Center(
-                        child: HangmanFigure(
-                          errors: _round.currentErrors,
-                          maxErrors: _round.maxErrors,
-                          status: _round.status,
-                        ),
-                      ),
-                    ),
+                    _buildHangmanPanel(GameScreen.narrowHangmanPanelHeight),
                     const SizedBox(height: AppSpacing.md),
-                    ErrorProgress(
-                      currentErrors: _round.currentErrors,
-                      maxErrors: _round.maxErrors,
-                    ),
+                    _buildErrorProgress(),
                     const SizedBox(height: AppSpacing.xl),
-                    AnswerBoard(displayedAnswer: _round.displayedAnswer),
+                    _buildAnswerBoard(),
                     const SizedBox(height: AppSpacing.lg),
-                    GameStatusSlot(
-                      status: _round.status,
-                      hintUsed: _round.hintUsed,
-                      hint: _hint,
-                      onHintRequested: _onHintRequested,
-                    ),
+                    _buildStatusSlot(),
                   ],
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: AppSpacing.md),
-                  child: LetterKeyboard(
-                    guessedLetters: _round.guessedLetters,
-                    wrongLetters: _round.wrongLetters,
-                    isFinished: _round.isFinished,
-                    layout: _currentLayout,
-                    onLayoutChanged: _onLayoutChanged,
-                    onLetterPressed: _onLetterPressed,
-                  ),
+                  child: _buildKeyboard(),
                 ),
               ],
             ),
@@ -266,7 +297,9 @@ class GameScreenState extends State<GameScreen> {
   Widget _buildWideLayout(BuildContext context) {
     return ConstrainedBox(
       key: const Key('game-wide-layout'),
-      constraints: const BoxConstraints(maxWidth: 960),
+      constraints: const BoxConstraints(
+        maxWidth: GameScreen.wideContentMaxWidth,
+      ),
       child: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.margin,
@@ -276,56 +309,29 @@ class GameScreenState extends State<GameScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
-              flex: 4,
+              flex: GameScreen.wideLeftPanelFlex,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  SizedBox(
-                    height: 240,
-                    child: Center(
-                      child: HangmanFigure(
-                        errors: _round.currentErrors,
-                        maxErrors: _round.maxErrors,
-                        status: _round.status,
-                      ),
-                    ),
-                  ),
+                  _buildHangmanPanel(GameScreen.wideHangmanPanelHeight),
                   const SizedBox(height: AppSpacing.md),
-                  ErrorProgress(
-                    currentErrors: _round.currentErrors,
-                    maxErrors: _round.maxErrors,
-                  ),
+                  _buildErrorProgress(),
                 ],
               ),
             ),
             const SizedBox(width: AppSpacing.lg),
             Expanded(
-              flex: 6,
+              flex: GameScreen.wideRightPanelFlex,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  RoundInfoHeader(
-                    category: widget.category,
-                    difficulty: widget.difficulty,
-                  ),
+                  _buildRoundInfoHeader(),
                   const SizedBox(height: AppSpacing.md),
-                  AnswerBoard(displayedAnswer: _round.displayedAnswer),
+                  _buildAnswerBoard(),
                   const SizedBox(height: AppSpacing.md),
-                  GameStatusSlot(
-                    status: _round.status,
-                    hintUsed: _round.hintUsed,
-                    hint: _hint,
-                    onHintRequested: _onHintRequested,
-                  ),
+                  _buildStatusSlot(),
                   const SizedBox(height: AppSpacing.md),
-                  LetterKeyboard(
-                    guessedLetters: _round.guessedLetters,
-                    wrongLetters: _round.wrongLetters,
-                    isFinished: _round.isFinished,
-                    layout: _currentLayout,
-                    onLayoutChanged: _onLayoutChanged,
-                    onLetterPressed: _onLetterPressed,
-                  ),
+                  _buildKeyboard(),
                   const SizedBox(height: AppSpacing.md),
                 ],
               ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../../src/domain/round_status.dart';
+import '../../../../shared/theme/app_theme.dart';
+import '../../../../domain/round_status.dart';
 import 'hint_panel.dart';
 import 'round_outcome_banner.dart';
 
@@ -44,7 +45,7 @@ class GameStatusSlot extends StatelessWidget {
       constraints: const BoxConstraints(minHeight: 76.0),
       child: Center(
         child: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 250),
+          duration: AppMotion.quick,
           switchInCurve: Curves.easeInOut,
           switchOutCurve: Curves.easeInOut,
           child: child,

@@ -1,5 +1,5 @@
 import 'package:avaliacao_pg_mobile_flutter_01/data/models/answer_entry.dart';
-import 'package:avaliacao_pg_mobile_flutter_01/src/domain/text_format.dart';
+import 'package:avaliacao_pg_mobile_flutter_01/domain/text_format.dart';
 
 import 'round_result.dart';
 import 'round_status.dart';

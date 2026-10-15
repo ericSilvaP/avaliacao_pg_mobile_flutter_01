@@ -8,6 +8,18 @@ import '../../../../shared/theme/app_theme.dart';
 class AnswerBoard extends StatelessWidget {
   const AnswerBoard({super.key, required this.displayedAnswer});
 
+  static const double _fallbackMaxWidth = 360;
+  static const double _minCellWidth = 14;
+  static const double _maxCellWidth = 36;
+  static const double _minCellHeight = 22;
+  static const double _maxCellHeight = 48;
+  static const double _minFontSize = 11;
+  static const double _maxFontSize = 22;
+  static const double _minWordSpacing = 10;
+  static const double _maxWordSpacing = 18;
+  static const double _minRunSpacing = 8;
+  static const double _maxRunSpacing = 16;
+
   final String displayedAnswer;
 
   static final RegExp _letterRegex = RegExp(r'^\p{L}$', unicode: true);
@@ -111,7 +123,7 @@ class AnswerBoard extends StatelessWidget {
         builder: (context, constraints) {
           final maxWidth = constraints.maxWidth.isFinite
               ? constraints.maxWidth
-              : 360.0;
+              : _fallbackMaxWidth;
           final longestWordLength = words.isEmpty
               ? 1
               : words.map((w) => w.length).reduce(math.max);
@@ -120,11 +132,20 @@ class AnswerBoard extends StatelessWidget {
           final availableForLongest =
               maxWidth - (longestWordLength - 1) * cellGap;
           final calculatedWidth = availableForLongest / longestWordLength;
-          final cellWidth = calculatedWidth.clamp(14.0, 36.0);
-          final cellHeight = (cellWidth * 1.3).clamp(22.0, 48.0);
-          final fontSize = (cellWidth * 0.65).clamp(11.0, 22.0);
-          final wordSpacing = (cellWidth * 0.7).clamp(10.0, 18.0);
-          final runSpacing = (cellHeight * 0.35).clamp(8.0, 16.0);
+          final cellWidth = calculatedWidth.clamp(_minCellWidth, _maxCellWidth);
+          final cellHeight = (cellWidth * 1.3).clamp(
+            _minCellHeight,
+            _maxCellHeight,
+          );
+          final fontSize = (cellWidth * 0.65).clamp(_minFontSize, _maxFontSize);
+          final wordSpacing = (cellWidth * 0.7).clamp(
+            _minWordSpacing,
+            _maxWordSpacing,
+          );
+          final runSpacing = (cellHeight * 0.35).clamp(
+            _minRunSpacing,
+            _maxRunSpacing,
+          );
 
           return Wrap(
             alignment: WrapAlignment.center,

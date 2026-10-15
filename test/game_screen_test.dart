@@ -11,8 +11,8 @@ import 'package:avaliacao_pg_mobile_flutter_01/features/game/presentation/widget
 import 'package:avaliacao_pg_mobile_flutter_01/features/game/presentation/widgets/round_info_header.dart';
 import 'package:avaliacao_pg_mobile_flutter_01/features/game/presentation/widgets/round_outcome_banner.dart';
 import 'package:avaliacao_pg_mobile_flutter_01/shared/theme/app_theme.dart';
-import 'package:avaliacao_pg_mobile_flutter_01/src/domain/round_result.dart';
-import 'package:avaliacao_pg_mobile_flutter_01/src/domain/round_status.dart';
+import 'package:avaliacao_pg_mobile_flutter_01/domain/round_result.dart';
+import 'package:avaliacao_pg_mobile_flutter_01/domain/round_status.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

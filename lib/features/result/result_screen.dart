@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../shared/theme/app_colors.dart';
 import '../../shared/theme/app_theme.dart';
-import '../../src/domain/round_result.dart';
+import '../../domain/round_result.dart';
 
 const Color _resultBackground = Color(0xFF0F0C1B);
 
@@ -25,6 +25,12 @@ class ResultScreen extends StatelessWidget {
   final String? defeatLogoAssetPath;
 
   bool get _isVictory => result.isVictory;
+
+  Color get _statusColor => _isVictory ? AppColors.accent : AppColors.error;
+
+  IconData get _statusIcon => _isVictory
+      ? Icons.emoji_events_rounded
+      : Icons.sentiment_dissatisfied_rounded;
 
   @override
   Widget build(BuildContext context) {
@@ -52,26 +58,14 @@ class ResultScreen extends StatelessWidget {
                       width: 120,
                       height: 120,
                       child: logoAssetPath == null
-                          ? Icon(
-                              _isVictory
-                                  ? Icons.emoji_events_rounded
-                                  : Icons.sentiment_dissatisfied_rounded,
-                              size: 80,
-                              color: _isVictory
-                                  ? AppColors.accent
-                                  : AppColors.error,
-                            )
+                          ? Icon(_statusIcon, size: 80, color: _statusColor)
                           : Image.asset(
                               logoAssetPath,
                               fit: BoxFit.contain,
                               errorBuilder: (_, _, _) => Icon(
-                                _isVictory
-                                    ? Icons.emoji_events_rounded
-                                    : Icons.sentiment_dissatisfied_rounded,
+                                _statusIcon,
                                 size: 80,
-                                color: _isVictory
-                                    ? AppColors.accent
-                                    : AppColors.error,
+                                color: _statusColor,
                               ),
                             ),
                     ),
@@ -84,7 +78,7 @@ class ResultScreen extends StatelessWidget {
                     _isVictory ? 'Vitória!' : 'Derrota',
                     textAlign: TextAlign.center,
                     style: textTheme.headlineMedium?.copyWith(
-                      color: _isVictory ? AppColors.accent : AppColors.error,
+                      color: _statusColor,
                     ),
                   ),
                 ),

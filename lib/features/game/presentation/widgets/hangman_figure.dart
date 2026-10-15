@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../src/domain/round_status.dart';
+import '../../../../domain/round_status.dart';
 
 abstract final class HangmanAssets {
   HangmanAssets._();
@@ -19,7 +19,6 @@ class HangmanFigure extends StatelessWidget {
   const HangmanFigure({
     super.key,
     required this.errors,
-    this.maxErrors = 6,
     this.status = RoundStatus.inProgress,
     this.gallowsAsset = HangmanAssets.gallows,
     this.headAsset = HangmanAssets.head,
@@ -29,10 +28,11 @@ class HangmanFigure extends StatelessWidget {
     this.armRightAsset = HangmanAssets.armRight,
     this.legLeftAsset = HangmanAssets.legLeft,
     this.legRightAsset = HangmanAssets.legRight,
-  }) : assert(maxErrors == 6, 'maxErrors must be 6 to match body parts');
+  });
+
+  static const int bodyPartCount = 6;
 
   final int errors;
-  final int maxErrors;
   final RoundStatus status;
 
   final String gallowsAsset;
@@ -63,7 +63,7 @@ class HangmanFigure extends StatelessWidget {
     if (errors == 0) {
       return 'Forca vazia, nenhum erro cometido';
     }
-    return 'Forca com $errors de $maxErrors erros';
+    return 'Forca com $errors de ${HangmanFigure.bodyPartCount} erros';
   }
 
   @override

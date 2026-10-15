@@ -7,7 +7,7 @@ class ErrorProgress extends StatelessWidget {
   const ErrorProgress({
     super.key,
     required this.currentErrors,
-    this.maxErrors = 6,
+    required this.maxErrors,
   }) : assert(maxErrors > 0, 'maxErrors must be positive');
 
   final int currentErrors;
@@ -54,7 +54,7 @@ class ErrorProgress extends StatelessWidget {
             children: [
               for (var i = 0; i < maxErrors; i++)
                 AnimatedContainer(
-                  duration: const Duration(milliseconds: 250),
+                  duration: AppMotion.quick,
                   width: 20,
                   height: 6,
                   decoration: BoxDecoration(
