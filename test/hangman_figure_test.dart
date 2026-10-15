@@ -77,13 +77,6 @@ void main() {
       },
     );
 
-    test('asserts that maxErrors must be 6', () {
-      expect(
-        () => HangmanFigure(errors: 0, maxErrors: 5),
-        throwsAssertionError,
-      );
-    });
-
     testWidgets('exposes proper semantic descriptions', (tester) async {
       final semantics = tester.ensureSemantics();
 

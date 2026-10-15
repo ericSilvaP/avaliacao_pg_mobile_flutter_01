@@ -206,7 +206,6 @@ class GameScreenState extends State<GameScreen> {
       child: Center(
         child: HangmanFigure(
           errors: _round.currentErrors,
-          maxErrors: _round.maxErrors,
           status: _round.status,
         ),
       ),

@@ -7,7 +7,7 @@ class ErrorProgress extends StatelessWidget {
   const ErrorProgress({
     super.key,
     required this.currentErrors,
-    this.maxErrors = 6,
+    required this.maxErrors,
   }) : assert(maxErrors > 0, 'maxErrors must be positive');
 
   final int currentErrors;
