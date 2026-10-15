@@ -29,6 +29,12 @@ abstract final class AppRadius {
   static const double pill = 9999;
 }
 
+abstract final class AppMotion {
+  AppMotion._();
+
+  static const Duration quick = Duration(milliseconds: 250);
+}
+
 abstract final class AppTextStyles {
   AppTextStyles._();
 

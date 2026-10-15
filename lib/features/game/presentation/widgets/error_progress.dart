@@ -54,7 +54,7 @@ class ErrorProgress extends StatelessWidget {
             children: [
               for (var i = 0; i < maxErrors; i++)
                 AnimatedContainer(
-                  duration: const Duration(milliseconds: 250),
+                  duration: AppMotion.quick,
                   width: 20,
                   height: 6,
                   decoration: BoxDecoration(
