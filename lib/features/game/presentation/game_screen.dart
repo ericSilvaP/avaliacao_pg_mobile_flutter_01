@@ -152,17 +152,21 @@ class GameScreenState extends State<GameScreen> {
     return shouldAbandon ?? false;
   }
 
+  Future<void> _abandonRound() async {
+    final navigator = Navigator.of(context);
+    final confirmed = await _confirmAbandon(context);
+    if (confirmed && mounted) {
+      navigator.pop();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return PopScope(
       canPop: _round.isFinished,
       onPopInvokedWithResult: (didPop, result) async {
         if (didPop) return;
-        final navigator = Navigator.of(context);
-        final confirmed = await _confirmAbandon(context);
-        if (confirmed && mounted) {
-          navigator.pop();
-        }
+        await _abandonRound();
       },
       child: Scaffold(
         backgroundColor: AppColors.background,
@@ -172,12 +176,7 @@ class GameScreenState extends State<GameScreen> {
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_rounded),
             tooltip: 'Voltar',
-            onPressed: () async {
-              final confirmed = await _confirmAbandon(context);
-              if (confirmed && context.mounted) {
-                Navigator.of(context).pop();
-              }
-            },
+            onPressed: _abandonRound,
           ),
         ),
         body: SafeArea(
