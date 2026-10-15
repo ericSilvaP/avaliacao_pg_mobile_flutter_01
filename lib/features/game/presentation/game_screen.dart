@@ -187,6 +187,57 @@ class GameScreenState extends State<GameScreen> {
     );
   }
 
+  Widget _buildRoundInfoHeader() {
+    return RoundInfoHeader(
+      category: widget.category,
+      difficulty: widget.difficulty,
+    );
+  }
+
+  Widget _buildHangmanPanel(double height) {
+    return SizedBox(
+      height: height,
+      child: Center(
+        child: HangmanFigure(
+          errors: _round.currentErrors,
+          maxErrors: _round.maxErrors,
+          status: _round.status,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildErrorProgress() {
+    return ErrorProgress(
+      currentErrors: _round.currentErrors,
+      maxErrors: _round.maxErrors,
+    );
+  }
+
+  Widget _buildAnswerBoard() {
+    return AnswerBoard(displayedAnswer: _round.displayedAnswer);
+  }
+
+  Widget _buildStatusSlot() {
+    return GameStatusSlot(
+      status: _round.status,
+      hintUsed: _round.hintUsed,
+      hint: _hint,
+      onHintRequested: _onHintRequested,
+    );
+  }
+
+  Widget _buildKeyboard() {
+    return LetterKeyboard(
+      guessedLetters: _round.guessedLetters,
+      wrongLetters: _round.wrongLetters,
+      isFinished: _round.isFinished,
+      layout: _currentLayout,
+      onLayoutChanged: _onLayoutChanged,
+      onLetterPressed: _onLetterPressed,
+    );
+  }
+
   Widget _buildNarrowLayout(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -213,47 +264,20 @@ class GameScreenState extends State<GameScreen> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    RoundInfoHeader(
-                      category: widget.category,
-                      difficulty: widget.difficulty,
-                    ),
+                    _buildRoundInfoHeader(),
                     const SizedBox(height: AppSpacing.lg),
-                    SizedBox(
-                      height: 190,
-                      child: Center(
-                        child: HangmanFigure(
-                          errors: _round.currentErrors,
-                          maxErrors: _round.maxErrors,
-                          status: _round.status,
-                        ),
-                      ),
-                    ),
+                    _buildHangmanPanel(190),
                     const SizedBox(height: AppSpacing.md),
-                    ErrorProgress(
-                      currentErrors: _round.currentErrors,
-                      maxErrors: _round.maxErrors,
-                    ),
+                    _buildErrorProgress(),
                     const SizedBox(height: AppSpacing.xl),
-                    AnswerBoard(displayedAnswer: _round.displayedAnswer),
+                    _buildAnswerBoard(),
                     const SizedBox(height: AppSpacing.lg),
-                    GameStatusSlot(
-                      status: _round.status,
-                      hintUsed: _round.hintUsed,
-                      hint: _hint,
-                      onHintRequested: _onHintRequested,
-                    ),
+                    _buildStatusSlot(),
                   ],
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: AppSpacing.md),
-                  child: LetterKeyboard(
-                    guessedLetters: _round.guessedLetters,
-                    wrongLetters: _round.wrongLetters,
-                    isFinished: _round.isFinished,
-                    layout: _currentLayout,
-                    onLayoutChanged: _onLayoutChanged,
-                    onLetterPressed: _onLetterPressed,
-                  ),
+                  child: _buildKeyboard(),
                 ),
               ],
             ),
@@ -280,21 +304,9 @@ class GameScreenState extends State<GameScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  SizedBox(
-                    height: 240,
-                    child: Center(
-                      child: HangmanFigure(
-                        errors: _round.currentErrors,
-                        maxErrors: _round.maxErrors,
-                        status: _round.status,
-                      ),
-                    ),
-                  ),
+                  _buildHangmanPanel(240),
                   const SizedBox(height: AppSpacing.md),
-                  ErrorProgress(
-                    currentErrors: _round.currentErrors,
-                    maxErrors: _round.maxErrors,
-                  ),
+                  _buildErrorProgress(),
                 ],
               ),
             ),
@@ -304,28 +316,13 @@ class GameScreenState extends State<GameScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  RoundInfoHeader(
-                    category: widget.category,
-                    difficulty: widget.difficulty,
-                  ),
+                  _buildRoundInfoHeader(),
                   const SizedBox(height: AppSpacing.md),
-                  AnswerBoard(displayedAnswer: _round.displayedAnswer),
+                  _buildAnswerBoard(),
                   const SizedBox(height: AppSpacing.md),
-                  GameStatusSlot(
-                    status: _round.status,
-                    hintUsed: _round.hintUsed,
-                    hint: _hint,
-                    onHintRequested: _onHintRequested,
-                  ),
+                  _buildStatusSlot(),
                   const SizedBox(height: AppSpacing.md),
-                  LetterKeyboard(
-                    guessedLetters: _round.guessedLetters,
-                    wrongLetters: _round.wrongLetters,
-                    isFinished: _round.isFinished,
-                    layout: _currentLayout,
-                    onLayoutChanged: _onLayoutChanged,
-                    onLetterPressed: _onLetterPressed,
-                  ),
+                  _buildKeyboard(),
                   const SizedBox(height: AppSpacing.md),
                 ],
               ),
