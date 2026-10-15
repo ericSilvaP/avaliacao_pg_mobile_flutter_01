@@ -1,5 +1,5 @@
 import 'package:avaliacao_pg_mobile_flutter_01/features/game/presentation/widgets/hangman_figure.dart';
-import 'package:avaliacao_pg_mobile_flutter_01/src/domain/round_status.dart';
+import 'package:avaliacao_pg_mobile_flutter_01/domain/round_status.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

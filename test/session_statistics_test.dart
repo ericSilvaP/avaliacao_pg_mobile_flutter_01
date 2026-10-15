@@ -4,8 +4,8 @@ import 'package:avaliacao_pg_mobile_flutter_01/data/models/answer_entry.dart';
 import 'package:avaliacao_pg_mobile_flutter_01/domain/enums/answer_category.dart';
 import 'package:avaliacao_pg_mobile_flutter_01/domain/enums/difficulty.dart';
 import 'package:avaliacao_pg_mobile_flutter_01/features/session/session_statistics.dart';
-import 'package:avaliacao_pg_mobile_flutter_01/src/domain/round_result.dart';
-import 'package:avaliacao_pg_mobile_flutter_01/src/domain/round_status.dart';
+import 'package:avaliacao_pg_mobile_flutter_01/domain/round_result.dart';
+import 'package:avaliacao_pg_mobile_flutter_01/domain/round_status.dart';
 
 void main() {
   late SessionStatistics statistics;

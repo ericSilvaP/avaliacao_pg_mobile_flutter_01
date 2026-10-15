@@ -1,4 +1,4 @@
-import '../../src/domain/round_result.dart';
+import '../../domain/round_result.dart';
 
 class SessionStatistics {
   int _completedRounds = 0;

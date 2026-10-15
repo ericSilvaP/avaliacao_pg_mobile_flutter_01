@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../src/domain/round_status.dart';
+import '../../../../domain/round_status.dart';
 
 abstract final class HangmanAssets {
   HangmanAssets._();

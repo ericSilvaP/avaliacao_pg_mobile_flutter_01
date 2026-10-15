@@ -1,4 +1,4 @@
-import 'package:avaliacao_pg_mobile_flutter_01/src/domain/text_format.dart';
+import 'package:avaliacao_pg_mobile_flutter_01/domain/text_format.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

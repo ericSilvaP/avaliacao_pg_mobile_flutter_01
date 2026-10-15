@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../shared/theme/app_theme.dart';
-import '../../../../src/domain/round_status.dart';
+import '../../../../domain/round_status.dart';
 import 'hint_panel.dart';
 import 'round_outcome_banner.dart';
 

@@ -13,7 +13,7 @@ import 'features/setup/setup_screen.dart';
 import 'features/statistics/statistics_screen.dart';
 import 'shared/presentation/enum_labels.dart';
 import 'shared/theme/app_theme.dart';
-import 'src/domain/round_result.dart';
+import 'domain/round_result.dart';
 
 const String _victoryLogoAssetPath = 'assets/images/purple-term-logo.png';
 const String _defeatLogoAssetPath = 'assets/images/purple-term-dead-logo.png';
@@ -152,7 +152,7 @@ class _HangmanAppState extends State<HangmanApp> {
       home: Builder(
         builder: (context) => SetupScreen(
           repository: widget.repository,
-            logoAssetPath: _victoryLogoAssetPath,
+          logoAssetPath: _victoryLogoAssetPath,
           onStart: (category, difficulty) =>
               _startRound(context, category, difficulty),
           onOpenStatistics: () => _openStatistics(context),

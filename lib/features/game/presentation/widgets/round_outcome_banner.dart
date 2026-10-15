@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../shared/theme/app_colors.dart';
 import '../../../../shared/theme/app_theme.dart';
-import '../../../../src/domain/round_status.dart';
+import '../../../../domain/round_status.dart';
 
 /// Banner exibido quando a rodada termina (vitória ou derrota).
 ///

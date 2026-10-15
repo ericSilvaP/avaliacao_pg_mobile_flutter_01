@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../shared/theme/app_colors.dart';
 import '../../shared/theme/app_theme.dart';
-import '../../src/domain/round_result.dart';
+import '../../domain/round_result.dart';
 
 const Color _resultBackground = Color(0xFF0F0C1B);
 

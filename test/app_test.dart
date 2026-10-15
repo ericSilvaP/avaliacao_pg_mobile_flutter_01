@@ -11,7 +11,7 @@ import 'package:avaliacao_pg_mobile_flutter_01/features/game/presentation/game_s
 import 'package:avaliacao_pg_mobile_flutter_01/features/game/presentation/widgets/keyboard_layout.dart';
 import 'package:avaliacao_pg_mobile_flutter_01/features/game/presentation/widgets/letter_key.dart';
 import 'package:avaliacao_pg_mobile_flutter_01/features/setup/setup_screen.dart';
-import 'package:avaliacao_pg_mobile_flutter_01/src/domain/text_format.dart';
+import 'package:avaliacao_pg_mobile_flutter_01/domain/text_format.dart';
 
 class FakeAnswerRepository implements AnswerRepository {
   FakeAnswerRepository(this.entries);

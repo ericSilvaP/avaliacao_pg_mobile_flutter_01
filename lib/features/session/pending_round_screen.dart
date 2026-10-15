@@ -6,9 +6,9 @@ import '../../domain/enums/difficulty.dart';
 import '../../shared/presentation/enum_labels.dart';
 import '../../shared/theme/app_colors.dart';
 import '../../shared/theme/app_theme.dart';
-import '../../src/domain/game_round.dart';
-import '../../src/domain/round_result.dart';
-import '../../src/domain/text_format.dart';
+import '../../domain/game_round.dart';
+import '../../domain/round_result.dart';
+import '../../domain/text_format.dart';
 
 const Color _roundBackground = Color(0xFF0E0920);
 
